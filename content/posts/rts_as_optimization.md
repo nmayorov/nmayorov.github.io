@@ -1,7 +1,6 @@
 ---
 title: "Derivation of Kalman smoother from an optimization perspective"
 date: 2022-11-27
-draft: true
 katex: true
 ---
 
