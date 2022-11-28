@@ -23,7 +23,7 @@ z_k = H_k x_k + v_k \\
 \operatorname{E} v_i v_j^T = 0 \text{ for } i \neq j \\
 \operatorname{E} w_i v_j^T = 0 \\
 \end{gather*}
-$$</p><p>All symbols above are indexed by integer epoch and have the following meanings:</p><ul><li>$x_k$ &ndash; state vector, shape $n \times 1$</li><li>$F_k$ &ndash; state transition matrix, shape $n \times n$</li><li>$w_k$ &ndash; process noise, shape $m \times 1$</li><li>$G_k$ &ndash; noise input matrix, shape $n \times m$</li><li>$z_k$ &ndash; measurement vector, shape $l \times 1$</li><li>$H_k$ &ndash; measurement matrix, shape $l \times n$</li><li>$v_k$ &ndash; measurement noise, shape $l \times 1$</li><li>$x_0^-$ &ndash; apriori state mean, shape $n \times 1$</li><li>$P_0^-$ &ndash; apriori state error covariance, shape $n \times n$</li><li>$Q_k$ &ndash; covariance of process noise, shape $m \times m$</li><li>$R_k$ &ndash; covariance of measurement noise, shape $l \times l$</li></ul><p>Additionally the following notation is used:</p><ul><li>$\operatorname{E} \ldots$ &ndash; operation of taking mean</li><li>$C \succ 0$ &ndash; matrix $C$ is positive definite</li></ul><p>The last 3 equations say that process and measurement noises are not time correlated and not correlated to each other.</p><p>The task is to find optimal estimates of $x_k$ for epochs $k = 0, 1, \ldots, N$ taking into account the system model and the observed measurements $z_0, z_1, \ldots, z_{N-1}$.</p><h1 id=defining-the-optimization-problem>Defining the optimization problem
+$$</p><p>All symbols above are indexed by integer epoch and have the following meanings:</p><ul><li>$x_k$ &ndash; state vector, shape $n \times 1$</li><li>$F_k$ &ndash; state transition matrix, shape $n \times n$</li><li>$w_k$ &ndash; process noise, shape $m \times 1$</li><li>$G_k$ &ndash; noise input matrix, shape $n \times m$</li><li>$z_k$ &ndash; measurement vector, shape $l \times 1$</li><li>$H_k$ &ndash; measurement matrix, shape $l \times n$</li><li>$v_k$ &ndash; measurement noise vector, shape $l \times 1$</li><li>$x_0^-$ &ndash; apriori state mean, shape $n \times 1$</li><li>$P_0^-$ &ndash; apriori state error covariance, shape $n \times n$</li><li>$Q_k$ &ndash; covariance of process noise, shape $m \times m$</li><li>$R_k$ &ndash; covariance of measurement noise, shape $l \times l$</li></ul><p>Additionally the following notation is used:</p><ul><li>$\operatorname{E} \ldots$ &ndash; operation of taking mean</li><li>$C \succ 0$ &ndash; matrix $C$ is positive definite</li></ul><p>The last 3 equations say that process and measurement noises are not time correlated and not correlated to each other.</p><p>The task is to find optimal estimates of $x_k$ for epochs $k = 0, 1, \ldots, N$ taking into account the system model and the observed measurements $z_0, z_1, \ldots, z_{N-1}$.</p><h1 id=defining-the-optimization-problem>Defining the optimization problem
 <a class=heading-link href=#defining-the-optimization-problem><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>We will determine optimal estimates of $x_k$ by minimizing a cost function.
 The proposed cost function will be quadratic in $x_k$ and expressed as a sum of terms of 3 kinds:</p><ol><li>A term for prior on $x_0$</li><li>Terms for measurements (associated with $z_k$)</li><li>Terms for the time propagation (relating $x_k$ and $x_{k+1}$)</li></ol><h2 id=case-of-square-g_k>Case of square $G_k$
@@ -57,7 +57,7 @@ J(x, w) =& \frac{1}{2} \left(x_0 - x_0^-\right)^T \left(P_0^-\right)^{-1} \left(
 +& \frac{1}{2} \sum_{k = 0}^{N - 1} w_k^T Q_k^{-1} w_k
 \end{split}
 $$
-Here $x$ and $w$ are not independent and time propagation equations must be taken into account.
+Here $x$ and $w$ are not independent and the time propagation equations must be taken into account.
 Doing this, we&rsquo;ll get the following constrained optimization problem:</p><p>$$
 \begin{gather*}
 \text{minimize} \space J(x, w) \space \text{w.r.t.} \space x, w \\
@@ -81,7 +81,7 @@ L(x, w, \lambda) =& \frac{1}{2} \left(x_0 - x_0^-\right)^T \left(P_0^-\right)^{-
 \end{split}
 $$</p><p>Candidates for the minimum are searched as stationary points of the Lagrange function:
 $$\frac{\partial L}{\partial x_k} = 0; \frac{\partial L}{\partial w_k} = 0; \frac{\partial L}{\partial \lambda_k} = 0$$
-The partial derivative with respect to $x_k$ requires a separate treatment.</p><p>For $k = 0$:
+The partial derivative with respect to $x_k$ requires a separate treatment depending on $k$.</p><p>For $k = 0$:
 $$
 H_0^T R_0^{-1} \left(H_0 x_0 - z_0\right) + \left(P_0^-\right)^{-1} \left(x_0 - x_0^-\right) - F_0^T \lambda_1 = 0
 $$</p><p>For $0 &lt; k &lt; N$:
@@ -230,7 +230,7 @@ $$
 \Delta w_k^s = w_k^s - w_k
 $$
 The covariance of $\Delta w_k^s$ can be computed using the same approach as for the state estimate error covariance.
-The derivation is omitted for the sake of brevity and the final formula looks like this</p><p>$$
+The derivation is omitted for the sake of brevity and the final formula looks like this:</p><p>$$
 Q_k^s \equiv \operatorname{E} \Delta w_k^s \left(\Delta w_k^s\right)^T = Q_k + B_k \left(P^s_{k + 1} - P^-_{k + 1} \right) B_k^T \\
 \text{with } B_k = Q_k G_k^T \left(P_{k+1}^-\right)^{-1}
 $$</p><h1 id=summary-of-the-algorithm>Summary of the algorithm
