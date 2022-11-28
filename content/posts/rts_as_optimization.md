@@ -262,7 +262,7 @@ $$
 \Delta x_k^+ = x_k^+ - x_k \\\\
 \Delta x_k^s = x_k^s - x_k \\\\
 $$
-with $x_k$ being the true state. The error covariance:
+with $x_k$ being the true state. The error covariances:
 $$
 \begin{gather*}
 P_k^- = \operatorname{E} \Delta x_k^- \left(\Delta x_k^-\right)^T \\\\
@@ -307,7 +307,7 @@ x_k^s - x_k^+= C_k \left(x_{k + 1}^s - x_{k + 1}^-\right)
 $$
 From it the equivalent equation for the errors follows:
 $$
-e_k^s - e_k^+= C_k \left(e_{k + 1}^s - e_{k + 1}^-\right)
+\Delta x_k^s - \Delta x_k^+= C_k \left(\Delta x_{k + 1}^s - \Delta x_{k + 1}^-\right)
 $$
 Taking the covariance of both sides using the above stated properties we get:
 $$
@@ -318,7 +318,7 @@ $$
 P_k^s = P_k^+ + C_k \left(P_{k+1}^s - P_{k+1}^-\right) C_k^T
 $$
 
-# Estimation of noise
+# Estimation of noise vectors
 
 Noise estimates are computed directly from $\lambda_{k+1}$ as
 $$
