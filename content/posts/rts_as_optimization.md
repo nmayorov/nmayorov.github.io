@@ -29,11 +29,11 @@ All symbols above are indexed by integer epoch and have the following meanings:
 
 * $x_k$ -- state vector, shape $n \times 1$
 * $F_k$ -- state transition matrix, shape $n \times n$
-* $w_k$ -- process noise, shape $m \times 1$
+* $w_k$ -- process noise vector, shape $m \times 1$
 * $G_k$ -- noise input matrix, shape $n \times m$
 * $z_k$ -- measurement vector, shape $l \times 1$
 * $H_k$ -- measurement matrix, shape $l \times n$
-* $v_k$ -- measurement noise, shape $l \times 1$
+* $v_k$ -- measurement noise vector, shape $l \times 1$
 * $x_0^-$ -- apriori state mean, shape $n \times 1$
 * $P_0^-$ -- apriori state error covariance, shape $n \times n$
 * $Q_k$ -- covariance of process noise,  shape $m \times m$
@@ -102,7 +102,7 @@ J(x, w) =& \frac{1}{2} \left(x_0 - x_0^-\right)^T \left(P_0^-\right)^{-1} \left(
         +& \frac{1}{2} \sum_{k = 0}^{N - 1} w_k^T Q_k^{-1} w_k
 \end{split}
 $$
-Here $x$ and $w$ are not independent and time propagation equations must be taken into account.
+Here $x$ and $w$ are not independent and the time propagation equations must be taken into account.
 Doing this, we'll get the following constrained optimization problem:
 
 $$
@@ -134,7 +134,7 @@ $$
 
 Candidates for the minimum are searched as stationary points of the Lagrange function:
 $$\frac{\partial L}{\partial x_k} = 0; \frac{\partial L}{\partial w_k} = 0; \frac{\partial L}{\partial \lambda_k} = 0$$
-The partial derivative with respect to $x_k$ requires a separate treatment. 
+The partial derivative with respect to $x_k$ requires a separate treatment depending on $k$. 
 
 For $k = 0$:
 $$
@@ -329,7 +329,7 @@ $$
 \Delta w_k^s = w_k^s - w_k
 $$
 The covariance of $\Delta w_k^s$ can be computed using the same approach as for the state estimate error covariance.
-The derivation is omitted for the sake of brevity and the final formula looks like this
+The derivation is omitted for the sake of brevity and the final formula looks like this:
 
 $$
 Q_k^s \equiv \operatorname{E} \Delta w_k^s \left(\Delta w_k^s\right)^T = Q_k + B_k \left(P^s_{k + 1} - P^-_{k + 1} \right) B_k^T \\\\
