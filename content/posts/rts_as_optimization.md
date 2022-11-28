@@ -14,7 +14,7 @@ $$
 x_{k+1} = F_k x_k + G_k w_k \\\\
 z_k = H_k x_k + v_k \\\\
 \operatorname{E} x_0 = x_0^- \\\\
-\operatorname{E} (x - x_0^-) (x - x_0^-)^T = P_0^-, P_0^- \succ 0 \\\\
+\operatorname{E} (x - x_0^-) (x - x_0^-)^T = P_0^- \succ 0 \\\\
 \operatorname{E} w_k = 0 \\\\
 \operatorname{E} w_k w_k^T = Q_k \succ 0 \\\\
 \operatorname{E} v_k = 0 \\\\
@@ -92,7 +92,7 @@ There is no simple workaround for this issue and another approach needs to be de
 ## Case of rectangular $G_k$ with $m < n$
 
 In this case the inverse of $Q_k^\prime$ can't be computed and thus the time propagation terms can't be formed directly.
-To overcome this problem the noises should be considered as unknown variables which need to be estimated along with $x$.
+To overcome this problem the noise vectors should be considered as unknown variables which need to be estimated along with $x$.
 The following cost function is minimized:
 
 $$
@@ -116,7 +116,7 @@ This is a linear least squares problem with linear equality constraints on the v
 Such problem can be solved by a known linear algebra method.
 The issue however is that this problem is large (in practically valuable cases) and sparse. 
 Whether there are suitable general numerical solvers for this kind of sparse problems is a topic for another research.
-In what follows we will derive an efficient specific solver for this problem. 
+In what follows we will derive an efficient solver specifically for this problem. 
 
 # Lagrange function and its stationary points
 
@@ -132,8 +132,7 @@ L(x, w, \lambda) =& \frac{1}{2} \left(x_0 - x_0^-\right)^T \left(P_0^-\right)^{-
 \end{split}
 $$
 
-Candidates for the minimum are searched as stationary points of the Lagrange function.
-In other words they satisfy the equations:
+Candidates for the minimum are searched as stationary points of the Lagrange function:
 $$\frac{\partial L}{\partial x_k} = 0; \frac{\partial L}{\partial w_k} = 0; \frac{\partial L}{\partial \lambda_k} = 0$$
 The partial derivative with respect to $x_k$ requires a separate treatment. 
 
@@ -165,7 +164,7 @@ Let's analyze what is this system and how it can be solved.
 First we can eliminate $w_k$ as it's directly expressed from $\lambda_{k+1}$.
 Then we see that it's a system of difference equations for epochs $k = 0, 1, \ldots, N$ for vectors $x_k$ and $\lambda_k$ (both with $n$ elements).
 To solve it, $2n$ initial or boundary conditions are required.
-We have $n$ conditions for $\lambda_0$ and $n$ conditions for $\lambda_N$.
+We have $n$ conditions at $k = 0$ (involving $\lambda_0$ and $x_0$) and $n$ conditions at $k = N$ (as $\lambda_N = 0$).
 So this is a boundary value problem which potentially has a solution (if boundary conditions are consistent) and if it's the case we can find it.
 
 # Kalman filter notation and formulas
