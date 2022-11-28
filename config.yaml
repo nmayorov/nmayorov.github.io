@@ -1,0 +1,13 @@
+baseURL: 'https://nmayorov.github.io'
+languageCode: 'en-us'
+title: 'My Blog'
+theme: 'hugo-coder'
+
+sectionPagesMenu: "main"
+menu:
+  main:
+    - identifier: posts
+      name: Posts
+      title: Posts
+      url: /posts/
+      weight: 0
