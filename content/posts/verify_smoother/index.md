@@ -16,7 +16,7 @@ The invaluable method of verification of estimation algorithms is Monte Carlo si
 2. Run the estimation algorithm and compute its estimation errors as $\Delta x_k = \hat{x}_k - x_k$, 
    where $\hat{x}_k$ and $x_k$ are the estimated and true state respectively at epoch $k$
 3. Repeat steps 1 and 2 many times and compute sample mean and covariance of the errors $\Delta x_k$ for each epoch $k$
-4. The sample mean must be close to zero and the sample covariance must match the covariance estimated by the algorithm.
+4. The sample mean must be close to zero and the sample covariance must match the covariance estimated by the algorithm
 
 Alternatively sample root mean squared errors (as $\operatorname{E} \Delta x_k (\Delta x_k)^T$) can be compared to the estimated covariances.
 This will check mean and covariance correctness simultaneously. 
@@ -95,7 +95,7 @@ v_2
 \end{bmatrix}_k
 $$
 
-A knowledge on prior statistics on $x_0$ is also available:
+Knowledge on prior statistics on $x_0$ is also available:
 $$
 \operatorname{E} x_0 = x_0^- \\\\
 \operatorname{E} (x_0 - x_0^-)(x_0 - x_0^-)^T = P_0^-
@@ -104,7 +104,7 @@ $$
 
 ## Model summary
 
-We have formulated a discrete time stochastic model in the [standard form]({{<ref "/content/posts/rts_as_optimization.md#problem-formulation">}}).
+We have formulated a discrete time linear stochastic model in the [standard form]({{<ref "/content/posts/rts_as_optimization.md#problem-formulation">}}).
 The required matrices have the following form for our problem (they don't depend on $k$).
 
 Prior mean:
@@ -164,7 +164,7 @@ $$
 
 ## Numerical values
 
-Here we define which numerical values will be used in the simulation.
+Here I define which numerical values will be used in the simulation.
 For intuitiveness I assume that $x_1$ is measured in radians and $x_2$ in radians per second (imagine a simple gravity pendulum).
 Then dimensions of the other variables follow.
 
@@ -190,7 +190,7 @@ For brevity and simplicity I don't analyze correlation between the states (off-d
 ## Variable realization plots
 
 Plots for the variables during one simulation run are depicted below.
-The second row enlarges the end part of the plots.
+The plots in the second row enlarges the end part of the plots in the first row.
 
 [![state_sample](figs/state_sample.svg)](figs/state_sample.svg)
 
@@ -221,7 +221,7 @@ Based on the plots we can say the following:
 2. The smoother does indeed gives lower error RMS than the filter
 3. The steady state smoother RMS is lower by the factor of approximately $\sqrt{2}$ compared to the filter RMS
 4. The smoother performance is worse near the start and terminal epochs
-5. The noise vectors are marginally observable in this model, i. e. the smoother error RMS is slightly lower than the noise standard deviation
+5. The noise vectors are marginally observable in this model, i. e. the smoother error RMS and SD are slightly lower than the noise standard deviation
 
 # Conclusion
 
