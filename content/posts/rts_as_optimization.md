@@ -338,6 +338,12 @@ $$
 
 # Summary of the algorithm
 
+For the generality let's add a deterministic control signal $u_k$ in the time transition equations:
+$$
+x_{k + 1} = F_k x_k + G_k w_k + u_k
+$$
+It only changes the state prediction formula.
+
 To compute the state estimate and its covariance as the solution of the equality constrained linear least-squares problem the following algorithm must be used.
 
 ## Forward pass
@@ -355,7 +361,7 @@ $$
 
 ### Prediction step
 
-$$x_{k + 1}^- = F_k x_k^-$$
+$$x_{k + 1}^- = F_k x_k^- + u_k$$
 $$P_{k + 1}^- = F_k P_k^- F_k^T + G_k Q_k G_k^T$$
 
 All the variables $x_k^-, x_k^+, P_k^-, P_k^+$ are saved for the backward pass.
