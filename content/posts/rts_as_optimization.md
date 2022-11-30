@@ -336,13 +336,26 @@ Q_k^s \equiv \operatorname{E} \Delta w_k^s \left(\Delta w_k^s\right)^T = Q_k + B
 \text{with } B_k = Q_k G_k^T \left(P\_{k+1}^-\right)^{-1}
 $$
 
-# Summary of the algorithm
+# Minor generalization of the model
 
-For the generality let's add a deterministic control signal $u_k$ in the time transition equations:
+When applying the linear smoother just derived to solve subproblems arising in nonlinear estimation a minor generalization of the model is required:
+
+1. Consider a deterministic control signal $u_k$ in the time propagation equations
+2. Consider that the process noise vectors have known nonzero mean values $w_k^-$
+
+The Kalman prediction equation for the state then becomes
 $$
-x_{k + 1} = F_k x_k + G_k w_k + u_k
+x_{k + 1}^- = F_k x_k^+ + G_k w_k^- + u_k
 $$
-It only changes the state prediction formula.
+
+And the noise estimates are computed as
+$$
+w_k^s = w_k^- + Q_k G_k^T \left( P_{k+1}^- \right)^{-1}  \left(x_{k+1}^s - x_{k+1}^-\right)
+$$
+
+And everything else stays the same.
+
+# Summary of the algorithm
 
 To compute the state estimate and its covariance as the solution of the equality constrained linear least-squares problem the following algorithm must be used.
 
@@ -361,8 +374,8 @@ $$
 
 ### Prediction step
 
-$$x_{k + 1}^- = F_k x_k^- + u_k$$
-$$P_{k + 1}^- = F_k P_k^- F_k^T + G_k Q_k G_k^T$$
+$$x_{k + 1}^- = F_k x_k^+ + G_k w_k^- + u_k$$
+$$P_{k + 1}^- = F_k P_k^+ F_k^T + G_k Q_k G_k^T$$
 
 All the variables $x_k^-, x_k^+, P_k^-, P_k^+$ are saved for the backward pass.
 
@@ -376,7 +389,7 @@ $$
 
 For $k = N - 1, N - 2, \ldots, 0$ apply the following formulas:
 $$x_k^s = x_k^+ + C_k (x_{k+1}^s - x_{k+1}^-)$$
-$$w_k^s = B_k (x_{k+1}^s - x_{k+1}^-)$$
+$$w_k^s = w_k^- + B_k (x_{k+1}^s - x_{k+1}^-)$$
 $$P_k^s = P_k^+ + C_k (P_{k+1}^s - P_{k+1}^-) C_k^T$$
 $$Q_k^s = Q_k + B_k (P_{k+1}^s - P_{k+1}^-) B_k^T$$
 $$\text{with } C_k = P_k^+ F_k^T \left(P_{k + 1}^-\right)^{-1} \text{ and } B_k = Q_k G_k^T \left( P_{k+1}^- \right)^{-1}$$
