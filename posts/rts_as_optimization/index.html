@@ -6,7 +6,7 @@ Problem formulation Link to heading We consider an estimation problem for a disc
 <label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>Posts</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://nmayorov.github.io/posts/rts_as_optimization/>Derivation of Kalman smoother from an optimization perspective</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
 <time datetime=2022-11-27T00:00:00Z>November 27, 2022</time></span>
 <span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
-13-minute read</span></div></div></header><div><p>In this post Kalman smoother formulas are derived as a solution to an optimization problem.</p><h1 id=problem-formulation>Problem formulation
+14-minute read</span></div></div></header><div><p>In this post Kalman smoother formulas are derived as a solution to an optimization problem.</p><h1 id=problem-formulation>Problem formulation
 <a class=heading-link href=#problem-formulation><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>We consider an estimation problem for a discrete time linear stochastic system:
 $$
@@ -233,7 +233,15 @@ The covariance of $\Delta w_k^s$ can be computed using the same approach as for 
 The derivation is omitted for the sake of brevity and the final formula looks like this:</p><p>$$
 Q_k^s \equiv \operatorname{E} \Delta w_k^s \left(\Delta w_k^s\right)^T = Q_k + B_k \left(P^s_{k + 1} - P^-_{k + 1} \right) B_k^T \\
 \text{with } B_k = Q_k G_k^T \left(P_{k+1}^-\right)^{-1}
-$$</p><h1 id=summary-of-the-algorithm>Summary of the algorithm
+$$</p><h1 id=minor-generalization-of-the-model>Minor generalization of the model
+<a class=heading-link href=#minor-generalization-of-the-model><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>When applying the linear smoother just derived to solve subproblems arising in nonlinear estimation a minor generalization of the model is required:</p><ol><li>Consider a deterministic control signal $u_k$ in the time propagation equations</li><li>Consider that the process noise vectors have known nonzero mean values $w_k^-$</li></ol><p>The Kalman prediction equation for the state then becomes
+$$
+x_{k + 1}^- = F_k x_k^+ + G_k w_k^- + u_k
+$$</p><p>And the noise estimates are computed as
+$$
+w_k^s = w_k^- + Q_k G_k^T \left( P_{k+1}^- \right)^{-1} \left(x_{k+1}^s - x_{k+1}^-\right)
+$$</p><p>And everything else stays the same.</p><h1 id=summary-of-the-algorithm>Summary of the algorithm
 <a class=heading-link href=#summary-of-the-algorithm><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>To compute the state estimate and its covariance as the solution of the equality constrained linear least-squares problem the following algorithm must be used.</p><h2 id=forward-pass>Forward pass
 <a class=heading-link href=#forward-pass><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
@@ -246,8 +254,8 @@ P_k^+ = (I - K_k H_k) P_k^- \\
 \text{with} \space K_k = P_k^- H_k^T \left(H_k P_k^- H_k^T + R_k \right)^{-1}
 $$</p><h3 id=prediction-step>Prediction step
 <a class=heading-link href=#prediction-step><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h3><p>$$x_{k + 1}^- = F_k x_k^-$$
-$$P_{k + 1}^- = F_k P_k^- F_k^T + G_k Q_k G_k^T$$</p><p>All the variables $x_k^-, x_k^+, P_k^-, P_k^+$ are saved for the backward pass.</p><h2 id=backward-pass>Backward pass
+<span class=sr-only>Link to heading</span></a></h3><p>$$x_{k + 1}^- = F_k x_k^+ + G_k w_k^- + u_k$$
+$$P_{k + 1}^- = F_k P_k^+ F_k^T + G_k Q_k G_k^T$$</p><p>All the variables $x_k^-, x_k^+, P_k^-, P_k^+$ are saved for the backward pass.</p><h2 id=backward-pass>Backward pass
 <a class=heading-link href=#backward-pass><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h2><p>Assign the smoothed estimate and covariance for epoch $N$ to the forward pass variables:
 $$
@@ -255,7 +263,7 @@ x_N^s = x_N^- \\
 P_N^s = P_N^-
 $$</p><p>For $k = N - 1, N - 2, \ldots, 0$ apply the following formulas:
 $$x_k^s = x_k^+ + C_k (x_{k+1}^s - x_{k+1}^-)$$
-$$w_k^s = B_k (x_{k+1}^s - x_{k+1}^-)$$
+$$w_k^s = w_k^- + B_k (x_{k+1}^s - x_{k+1}^-)$$
 $$P_k^s = P_k^+ + C_k (P_{k+1}^s - P_{k+1}^-) C_k^T$$
 $$Q_k^s = Q_k + B_k (P_{k+1}^s - P_{k+1}^-) B_k^T$$
 $$\text{with } C_k = P_k^+ F_k^T \left(P_{k + 1}^-\right)^{-1} \text{ and } B_k = Q_k G_k^T \left( P_{k+1}^- \right)^{-1}$$</p><p>In the end, the variables $x_k^s, P_k^s$ and $w_k^s, Q_k^s$ contain optimal estimates and error covariances of state and noise vectors respectively for $k = 0, 1, \ldots, N$.</p><h1 id=conclusion>Conclusion
