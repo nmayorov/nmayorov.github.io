@@ -106,10 +106,7 @@ Here $x$ and $w$ are not independent and the time propagation equations must be 
 Doing this, we'll get the following constrained optimization problem:
 
 $$
-\begin{gather*}
-\text{minimize} \space J(x, w) \space \text{w.r.t.} \space x, w \\\\
-\text{subject to} \space x_{k + 1} = F_k x_k + G_k w_k
-\end{gather*}
+\min_{x, w} J(x, w) \text{ subject to} \space x_{k + 1} = F_k x_k + G_k w_k
 $$
 
 This is a linear least squares problem with linear equality constraints on the variables.
@@ -147,7 +144,7 @@ $$H_k^T R_k^{-1} \left(H_k x_k - z_k\right) + \lambda_k - F_k^T \lambda_{k + 1} 
 For $k = N$:
 $$\lambda_N = 0$$
 
-To conform the first equation with the second one we introduce $$\lambda_0 \equiv \left(P_0^-\right)^{-1} \left(x_0 - x_0^-\right)$$
+To conform the first equation with the second one we introduce $$\lambda_0 \coloneqq \left(P_0^-\right)^{-1} \left(x_0 - x_0^-\right)$$
 
 Then computing partial derivatives with respect to $w_k$ and $\lambda_k$ and joining all the equations together we get the following system:
 $$
@@ -332,7 +329,7 @@ The covariance of $\Delta w_k^s$ can be computed using the same approach as for 
 The derivation is omitted for the sake of brevity and the final formula looks like this:
 
 $$
-Q_k^s \equiv \operatorname{E} \Delta w_k^s \left(\Delta w_k^s\right)^T = Q_k + B_k \left(P^s_{k + 1} - P^-_{k + 1} \right) B_k^T \\\\
+Q_k^s \coloneqq \operatorname{E} \Delta w_k^s \left(\Delta w_k^s\right)^T = Q_k + B_k \left(P^s_{k + 1} - P^-_{k + 1} \right) B_k^T \\\\
 \text{with } B_k = Q_k G_k^T \left(P\_{k+1}^-\right)^{-1}
 $$
 
