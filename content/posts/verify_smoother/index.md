@@ -16,24 +16,23 @@ The invaluable method of verification of estimation algorithms is Monte Carlo si
 2. Run the estimation algorithm and compute its estimation errors as $\Delta x_k = \hat{x}_k - x_k$, 
    where $\hat{x}_k$ and $x_k$ are the estimated and true state respectively at epoch $k$
 3. Repeat steps 1 and 2 many times and compute sample mean and covariance of the errors $\Delta x_k$ for each epoch $k$
-4. The sample mean must be close to zero and the sample covariance must match the covariance estimated by the algorithm
 
-Alternatively sample root mean squared errors (as $\operatorname{E} \Delta x_k (\Delta x_k)^T$) can be compared to the estimated covariances.
-This will check mean and covariance correctness simultaneously. 
-This is the approach I'm going to use.
+The sample mean must be close to zero and the sample covariance must match the covariance estimated by the algorithm.
+Alternatively sample root mean squared errors (as $\sqrt{\operatorname{E} [\Delta x_k]_i^2}$) can be compared with standard deviations provided by the estimation algorithm.
+This will check mean and covariance correctness simultaneously and this is the approach I usually use.
 
-I will apply this method to verify the Kalman filter and smoother algorithms applied to the system described in the next section.
+I will use this method to verify the Kalman filter and smoother algorithms applied to the system described in the next section.
 
 # Model formulation
 
 As a dynamic system I consider a damped linear oscillator which is described by the following differential equation for $y$:
 $$\ddot{y} + 2 \eta \omega \dot{y} + \omega^2 y = f$$
-With $\omega \geq 0$ being the oscillator frequency and $\eta \geq 0$ being a dimensionless damping factor and $f$ being an external force.
+With $\omega > 0$ being the oscillator frequency and $\eta \geq 0$ being a dimensionless damping factor and $f$ being an external force.
 
 Introducing the variables
 $$
-x_1 \equiv y \\\\
-x_2 \equiv \dot{y} \\\\
+x_1 \coloneqq y \\\\
+x_2 \coloneqq \dot{y} \\\\
 $$
 we rewrite it as a first order system
 $$
@@ -57,7 +56,7 @@ In this form we have a linear continuous stochastic process for $x$.
 To convert it to an equivalent discrete form we use a first-order discretization scheme.
 Let $\tau$ be the sampling period and 
 $$
-x_k \equiv x(k \tau)
+x_k \coloneqq x(k \tau)
 $$
 Then the discrete time system is
 $$
@@ -187,16 +186,16 @@ I have used 10000 runs in the simulation.
 In each run the state for 1000 epochs was computed.
 For brevity and simplicity I don't analyze correlation between the states (off-diagonal elements of the covariance).
 
-## Variable realization plots
+## Plots for a single simulation run
 
-Plots for the variables during one simulation run are depicted below.
+Plots of the variables for one run are depicted below.
 The plots in the second row enlarges the end part of the plots in the first row.
 
 [![state_sample](figs/state_sample.svg)](figs/state_sample.svg)
 
-As you can see the true state behaves erratically, especially $x_2$ as directly affected by the noise.
+As you can see the true state behaves somewhat erratically, especially $x_2$ as directly affected by the noise.
 The same can be said for the filter estimates.
-Whereas the smoothed estimates are indeed significantly smoother and qualitatively more accurate (closer to the true state).
+Whereas the smoother estimates are indeed significantly smoother and qualitatively more accurate (closer to the true state).
 
 A plot for the noise during one run is depicted below.
 
@@ -211,11 +210,11 @@ Below plots with sample root mean squared errors (RMS) and estimated standard de
 [![compare_x1](figs/compare_x1.svg)](figs/compare_x1.svg)
 [![compare_x2](figs/compare_x2.svg)](figs/compare_x2.svg)
 
-A plot for $w$ is done with a narrow y-axis range to demonstrate the difference between all depicted lines.
+A plot for $w$ is done with a narrow y-axis range to demonstrate the difference between all depicted data.
 
 [![compare_w](figs/compare_w.svg)](figs/compare_w.svg)
 
-Based on the plots we can say the following:
+We can make the following observations:
 
 1. The agreement between sample RMS and estimated SD is very good
 2. The smoother does indeed gives lower error RMS than the filter
