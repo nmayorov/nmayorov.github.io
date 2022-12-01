@@ -59,10 +59,7 @@ J(x, w) =& \frac{1}{2} \left(x_0 - x_0^-\right)^T \left(P_0^-\right)^{-1} \left(
 $$
 Here $x$ and $w$ are not independent and the time propagation equations must be taken into account.
 Doing this, we&rsquo;ll get the following constrained optimization problem:</p><p>$$
-\begin{gather*}
-\text{minimize} \space J(x, w) \space \text{w.r.t.} \space x, w \\
-\text{subject to} \space x_{k + 1} = F_k x_k + G_k w_k
-\end{gather*}
+\min_{x, w} J(x, w) \text{ subject to} \space x_{k + 1} = F_k x_k + G_k w_k
 $$</p><p>This is a linear least squares problem with linear equality constraints on the variables.
 Such problem can be solved by a known linear algebra method.
 The issue however is that this problem is large (in practically valuable cases) and sparse.
@@ -86,7 +83,7 @@ $$
 H_0^T R_0^{-1} \left(H_0 x_0 - z_0\right) + \left(P_0^-\right)^{-1} \left(x_0 - x_0^-\right) - F_0^T \lambda_1 = 0
 $$</p><p>For $0 &lt; k &lt; N$:
 $$H_k^T R_k^{-1} \left(H_k x_k - z_k\right) + \lambda_k - F_k^T \lambda_{k + 1} = 0$$</p><p>For $k = N$:
-$$\lambda_N = 0$$</p><p>To conform the first equation with the second one we introduce $$\lambda_0 \equiv \left(P_0^-\right)^{-1} \left(x_0 - x_0^-\right)$$</p><p>Then computing partial derivatives with respect to $w_k$ and $\lambda_k$ and joining all the equations together we get the following system:
+$$\lambda_N = 0$$</p><p>To conform the first equation with the second one we introduce $$\lambda_0 \coloneqq \left(P_0^-\right)^{-1} \left(x_0 - x_0^-\right)$$</p><p>Then computing partial derivatives with respect to $w_k$ and $\lambda_k$ and joining all the equations together we get the following system:
 $$
 \begin{gather*}
 x_{k + 1} = F_k x_k + G_k w_k \\
@@ -231,7 +228,7 @@ $$
 $$
 The covariance of $\Delta w_k^s$ can be computed using the same approach as for the state estimate error covariance.
 The derivation is omitted for the sake of brevity and the final formula looks like this:</p><p>$$
-Q_k^s \equiv \operatorname{E} \Delta w_k^s \left(\Delta w_k^s\right)^T = Q_k + B_k \left(P^s_{k + 1} - P^-_{k + 1} \right) B_k^T \\
+Q_k^s \coloneqq \operatorname{E} \Delta w_k^s \left(\Delta w_k^s\right)^T = Q_k + B_k \left(P^s_{k + 1} - P^-_{k + 1} \right) B_k^T \\
 \text{with } B_k = Q_k G_k^T \left(P_{k+1}^-\right)^{-1}
 $$</p><h1 id=minor-generalization-of-the-model>Minor generalization of the model
 <a class=heading-link href=#minor-generalization-of-the-model><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>

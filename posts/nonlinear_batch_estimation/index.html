@@ -1,0 +1,134 @@
+<!doctype html><html lang=en><head><title>Nonlinear batch estimation · My Blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=description content="In this note I present a development of nonlinear batch estimation algorithm.
+Model description Link to heading The state estimation problem in a nonlinear system is considered. The formulations is analogous to the linear case, but with nonlinear transition and measurement equations. We use uppercase letters to denote variables participating in the nonlinear model. Time transition and measurement equations for which are $$ Z_k = f_k(X_k) + V_k \\ X_{k+1} = h_k(X_k, W_k) $$ All the other assumptions remain the same."><meta name=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="Nonlinear batch estimation"><meta name=twitter:description content="In this note I present a development of nonlinear batch estimation algorithm.
+Model description Link to heading The state estimation problem in a nonlinear system is considered. The formulations is analogous to the linear case, but with nonlinear transition and measurement equations. We use uppercase letters to denote variables participating in the nonlinear model. Time transition and measurement equations for which are $$ Z_k = f_k(X_k) + V_k \\ X_{k+1} = h_k(X_k, W_k) $$ All the other assumptions remain the same."><meta property="og:title" content="Nonlinear batch estimation"><meta property="og:description" content="In this note I present a development of nonlinear batch estimation algorithm.
+Model description Link to heading The state estimation problem in a nonlinear system is considered. The formulations is analogous to the linear case, but with nonlinear transition and measurement equations. We use uppercase letters to denote variables participating in the nonlinear model. Time transition and measurement equations for which are $$ Z_k = f_k(X_k) + V_k \\ X_{k+1} = h_k(X_k, W_k) $$ All the other assumptions remain the same."><meta property="og:type" content="article"><meta property="og:url" content="https://nmayorov.github.io/posts/nonlinear_batch_estimation/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-11-30T00:00:00+00:00"><meta property="article:modified_time" content="2022-11-30T00:00:00+00:00"><link rel=canonical href=https://nmayorov.github.io/posts/nonlinear_batch_estimation/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.c4d7e93a158eda5a65b3df343745d2092a0a1e2170feeec909b8a89443903c6a.css integrity="sha256-xNfpOhWO2lpls980N0XSCSoKHiFw/u7JCbiolEOQPGo=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5><meta name=generator content="Hugo 0.107.0"></head><body class="preload-transitions colorscheme-light"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>My Blog</a>
+<input type=checkbox id=menu-toggle>
+<label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>Posts</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://nmayorov.github.io/posts/nonlinear_batch_estimation/>Nonlinear batch estimation</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2022-11-30T00:00:00Z>November 30, 2022</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+7-minute read</span></div></div></header><div><p>In this note I present a development of nonlinear batch estimation algorithm.</p><h1 id=model-description>Model description
+<a class=heading-link href=#model-description><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>The state estimation problem in a nonlinear system is considered.
+The formulations is analogous to the <a href=https://nmayorov.github.io/posts/rts_as_optimization/#problem-formulation>linear case</a>, but with nonlinear transition and measurement equations.
+We use uppercase letters to denote variables participating in the nonlinear model.
+Time transition and measurement equations for which are
+$$
+Z_k = f_k(X_k) + V_k \\
+X_{k+1} = h_k(X_k, W_k)
+$$
+All the other assumptions remain the same.
+The task is to estimate $X_k$ for epochs $k = 0, 1, \ldots, N$.
+This will be done by solving an optimization problem.</p><h1 id=optimization-problem>Optimization problem
+<a class=heading-link href=#optimization-problem><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>Similarly to the linear case the cost function is defined as follows
+$$
+\begin{split}
+E(X, W) =& \frac{1}{2} (X_0 - X_0^-)^T P_0^- (X_0 - X_0^-) \\
++& \frac{1}{2} \sum_{k = 0}^{N-1} (h_k(X_k) - Z_k)^T R_k^{-1} (h_k(X_k) - Z_k) \\
++& \frac{1}{2} \sum_{k = 0}^{N-1} W_k^T Q_k^{-1} W_k
+\end{split}
+$$
+It must be optimized taking into account the time transition equations:
+$$
+\min_{X, W} \space E(X, W) \text{ subject to} \space X_{k + 1} = f_k(X_k, W_k)
+$$
+It can be classified as a nonlinear least-squares problem with nonlinear equality constraints on the variables.</p><h1 id=outline-of-the-solution-method>Outline of the solution method
+<a class=heading-link href=#outline-of-the-solution-method><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>Consider a general optimization problem of the form:
+$$
+\min_x f(x) \text{ subject to } c(x) = 0
+$$
+One established method of solving it called sequential quadratic programming (SQP) goes like this:</p><ol><li>At current estimate $x_i$ form a local quadratic approximation of the Lagrange function for the problem and a linear approximation of the constraints</li><li>Solve this quadratic programming task to obtain step $p_k$ to the next estimate</li><li>Form the next estimate $x_{i+1} = x_i + \alpha_i p_i$</li><li>Repeat until convergence</li></ol><p>To form the mentioned local quadratic approximation, the gradient (gradient of $f$ might be used with the equivalent result) and the Hessian of the Lagrange function needs to be formed.
+The method we will apply differs in how we form the Hessian approximation and might be called a Gauss-Newton approximation of the SQP method.</p><p>In a nonlinear least-squares problem the cost function has the form
+$$
+f(x) = \frac{1}{2} r(x)^T r(x)
+$$
+The Jacobian matrix of $r(x)$ is defined as
+$$
+J(x) = \begin{bmatrix} \nabla_x r_1(x) & \nabla_x r_2(x) & \ldots & \nabla_x r_n(x) \end{bmatrix}^T
+$$
+Then the gradient and Gauss-Newton approximation of the Jacobian are:
+$$
+\nabla_x f(x) = J^T r(x) \\
+\nabla^2_{xx} f(x) \approx J(x)^T J(x)
+$$
+Opposed to SQP method we also don&rsquo;t include the Hessian of the constraints, i. e. form a quadratic model for the cost function, not for the Lagrangian.</p><p>With these approximations the quadratic subproblem is
+$$
+\min_{p_i} (r_i + J_i p_i)^T (r_i + J_i p_i) \text{ subject to } c_i + A_i p_i = 0 \\
+\text{with } r_i = r(x_i), J_i = J(x_i), c_i = c(x_i), A_i = \nabla_x c(x) \vert_{x_i}
+$$
+Logic of the algorithm iterations remain the same.</p><p>It must be said that the proposed method is not widely known.
+However my intuition and limited experience tells me that it is a legit approach akin to Gauss-Newton method of solving unconstrained nonlinear least squares.</p><p>For our specific problem the linear subproblem formulated above is solved by a Kalman smoother.
+The details will be presented in the next section.</p><h1 id=constructing-the-linearized-subproblem>Constructing the linearized subproblem
+<a class=heading-link href=#constructing-the-linearized-subproblem><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>First introduce convenient notation. Let</p><ul><li>$\hat{X}_k, \hat{W}_k$ be current estimates of $X_k$ and $W_k$</li><li>$x_k, w_k$ be correction to the current estimates</li></ul><p>To conform to the estimation reasoning like in Extended Kalman Filter we define relation for the linearization as
+$$
+\hat{X}_k = X_k + x_k \\
+\hat{W}_k = W_k + w_k
+$$
+That is the current estimate equals the true value plus the correction or error to be estimated.
+This form seems more natural for the estimation problems.</p><p>The linearized version of the measurement residual:
+$$
+Z_k - h(X_k) = Z_k - h(\hat{X}_k - x_k) \approx Z_k - h(\hat{X}_k) + H_k x_k = H_k x_k - z_k \\
+\text{with } H_k = \left.\frac{\partial h(X)}{\partial X}\right\vert_{\hat{X}_k} \text{ and } z_k = h(\hat{X}_k) - Z_k
+$$</p><p>The linearized version of the time propagation equation:
+$$
+X_{k + 1} = f_k(X_k, W_k) \\
+\hat{X}_{k + 1} - x_{k + 1} = f_k(\hat{X}_k - x_k, \hat{W}_k - w_k) \approx f_k(\hat{X}_k, \hat{W}_k) - F_k x_k - G_k w_k \\
+x_{k + 1} = F_k x_k + G_k w_k + u_k \\
+\text{with } F_k = \left.\frac{\partial f(X, W)}{\partial X}\right\vert_{\hat{X}_k, \hat{W}_k}
+, G_k = \left.\frac{\partial f(X, W)}{\partial W}\right\vert_{\hat{X}_k, \hat{W}_k}
+, u_k = \hat{X}_{k + 1} - f_k(\hat{X}_k, \hat{W}_k)
+$$</p><h2 id=summary-of-the-linearized-subproblem>Summary of the linearized subproblem
+<a class=heading-link href=#summary-of-the-linearized-subproblem><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>The linearized cost function
+$$
+\begin{split}
+J(x, w) =& \frac{1}{2} (x_0 - x_0^-)^T P_0^{-1} (x_0 - x_0^-) \\
++& \frac{1}{2} \sum_{k = 0}^{N - 1} (H_k x_k - z_k)^T R_k^{-1} (H_k x_k - z_k) \\
++& \frac{1}{2} \sum_{k = 0}^{N - 1} (w_k - w_k^-)^T Q_k^{-1} (w_k - w_k^-)
+\end{split}
+$$
+is minimized subject to constraints:
+$$
+x_{k + 1} = F_k x_k + G_k w_k + u_k
+$$</p><p>Where all matrices and vectors have the following values:
+$$
+x_0^- = \hat{X}_0 - X_0^- \\
+z_k = h(\hat{X}_k) - Z_k \\
+H_k = \left.\frac{\partial h(X)}{\partial X}\right\vert_{\hat{X}_k} \\
+w_k^- = \hat{W}_k \\
+F_k = \left.\frac{\partial f(X, W)}{\partial X}\right\vert_{\hat{X}_k, \hat{W}_k} \\
+G_k = \left.\frac{\partial f(X, W)}{\partial W}\right\vert_{\hat{X}_k, \hat{W}_k} \\
+u_k = \hat{X}_{k + 1} - f_k(\hat{X}_k, \hat{W}_k)
+$$</p><p>Solution $x_k$ and $w_k$ to it is found using the linear smoother algorithm summarized <a href=https://nmayorov.github.io/posts/rts_as_optimization/#summary-of-the-algorithm>here</a>.</p><h1 id=step-selection-for-the-estimate-update>Step selection for the estimate update
+<a class=heading-link href=#step-selection-for-the-estimate-update><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>After the solution $x_k$ and $w_k$ to the subproblem is obtained the estimates are updated as:
+$$
+\hat{X}_k \leftarrow \hat{X}_k - \alpha x_k \\
+\hat{W}_k \leftarrow \hat{W}_k - \alpha w_k
+$$
+Where $0 &lt; \alpha \leq 1$ is selected such to decrease the cost function and violation of the constraints.</p><p>The idea is to monitor a merit function which combines the cost function with constraint violation $l_1$-norm [1], section 11.2:
+$$
+\Phi(X, W; \mu) = E(X, W) + \mu \sum_{k = 0}^{N - 1} \left\lVert X_{k + 1} - f_k(X_k, W_k) \right\rVert_1
+$$
+A proper value for $\mu$ is generally unknown and must be adjusted during iterations (increasing only).
+The whole theory is quite involved and requires experimentation.
+For now I just say that we adjust $\mu$ and select $\alpha$ on each iteration such as to drive constraints violations to zero while improving the cost function (at a certain level of constraints violation).
+The simplest strategy of selecting $\alpha = 1$ might also be effective because a good initial guess is available.</p><h1 id=initialization-and-termination>Initialization and termination
+<a class=heading-link href=#initialization-and-termination><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>Numerical optimization methods are sensitive to the initial guess &ndash; they search a local minimum in its vicinity.
+In our problem we can get a good initial guess on $X_k$ by estimating them with an Extended Kalman Filter.
+For the noises $W_k$ a natural guess is just zero.</p><p>There are several possible criteria for stopping the iterations:</p><ol><li>The cost function decrease on the last iteration is small compared to the cost function itself</li><li>The correction of $X_k$ and $W_k$ on the last iteration is small compared to their norm</li><li>The norm of the of the gradient of $E$ is small</li></ol><p>It might be necessary to combine criteria 1, 2, 3 with a check on the constraints violation norm
+Selecting a proper criteria requires experimentation as well.</p><h1 id=error-covariance-estimation>Error covariance estimation
+<a class=heading-link href=#error-covariance-estimation><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>Error covariance estimates for $X_k$ and $W_k$ are taken from the linear smoother output from the last iteration.</p><h1 id=conclusion>Conclusion
+<a class=heading-link href=#conclusion><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>I&rsquo;ve presented an outline of the nonlinear batch estimation algorithm which uses linear Kalman smoother on each iteration.
+This is a preliminarily version and I will fill in missing details as I get practical experience with it.</p><h1 id=references>References
+<a class=heading-link href=#references><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><ol><li>J. Nocedal, S. J. Wright &#171;Numerical Optimization, 2nd edition></li></ol></div><footer></footer></article><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}]})'></script></section></div><footer class=footer><section class=container>©
+2022
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.</section></footer></main><script src=/js/coder.min.236049395dc3682fb2719640872958e12f1f24067bb09c327b233e6290c7edac.js integrity="sha256-I2BJOV3DaC+ycZZAhylY4S8fJAZ7sJwyeyM+YpDH7aw="></script></body></html>
