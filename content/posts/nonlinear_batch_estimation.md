@@ -2,7 +2,6 @@
 title: "Nonlinear batch estimation"
 date: 2022-11-30
 katex: true
-draft: true
 ---
 
 In this note I present a development of nonlinear batch estimation algorithm.
@@ -172,6 +171,10 @@ There are several possible criteria for stopping the iterations:
 
 It might be necessary to combine criteria 1, 2, 3 with a check on the constraints violation norm
 Selecting a proper criteria requires experimentation as well.
+
+# Error covariance estimation
+
+Error covariance estimates for $X_k$ and $W_k$ are taken from the linear smoother output from the last iteration.
 
 # Conclusion
 
