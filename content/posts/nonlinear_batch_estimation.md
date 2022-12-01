@@ -60,7 +60,7 @@ The Jacobian matrix of $r(x)$ is defined as
 $$
 J(x) = \begin{bmatrix} \nabla_x r_1(x) & \nabla_x r_2(x) & \ldots & \nabla_x r_n(x) \end{bmatrix}^T
 $$
-Then the gradient and Gauss-Newton approximation of the Jacobian are:
+Then the gradient and Gauss-Newton approximation of the Hessian are:
 $$
 \nabla_x f(x) = J^T r(x) \\\\
 \nabla^2_{xx} f(x) \approx J(x)^T J(x)
