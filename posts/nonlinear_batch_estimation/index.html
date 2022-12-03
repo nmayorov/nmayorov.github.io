@@ -6,7 +6,7 @@ Model description Link to heading The state estimation problem in a nonlinear sy
 <label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>Posts</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://nmayorov.github.io/posts/nonlinear_batch_estimation/>Nonlinear batch estimation</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
 <time datetime=2022-11-30T00:00:00Z>November 30, 2022</time></span>
 <span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
-7-minute read</span></div></div></header><div><p>In this note I present a development of nonlinear batch estimation algorithm.</p><h1 id=model-description>Model description
+6-minute read</span></div></div></header><div><p>In this note I present a development of nonlinear batch estimation algorithm.</p><h1 id=model-description>Model description
 <a class=heading-link href=#model-description><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>The state estimation problem in a nonlinear system is considered.
 The formulations is analogous to the <a href=https://nmayorov.github.io/posts/rts_as_optimization/#problem-formulation>linear case</a>, but with nonlinear transition and measurement equations.
@@ -61,24 +61,22 @@ Logic of the algorithm iterations remain the same.</p><p>It must be said that th
 However my intuition and limited experience tells me that it is a legit approach akin to Gauss-Newton method of solving unconstrained nonlinear least squares.</p><p>For our specific problem the linear subproblem formulated above is solved by a Kalman smoother.
 The details will be presented in the next section.</p><h1 id=constructing-the-linearized-subproblem>Constructing the linearized subproblem
 <a class=heading-link href=#constructing-the-linearized-subproblem><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h1><p>First introduce convenient notation. Let</p><ul><li>$\hat{X}_k, \hat{W}_k$ be current estimates of $X_k$ and $W_k$</li><li>$x_k, w_k$ be correction to the current estimates</li></ul><p>To conform to the estimation reasoning like in Extended Kalman Filter we define relation for the linearization as
+<span class=sr-only>Link to heading</span></a></h1><p>First introduce convenient notation. Let</p><ul><li>$\hat{X}_k, \hat{W}_k$ be current estimates of $X_k$ and $W_k$</li><li>$x_k, w_k$ be correction to the current estimates</li></ul><p>The linearization relation is defined as:
 $$
-\hat{X}_k = X_k + x_k \\
-\hat{W}_k = W_k + w_k
+X_k = \hat{X}_k + x_k \\
+W_k = \hat{W}_k + w_k
+$$</p><p>The linearized version of the measurement residual:
 $$
-That is the current estimate equals the true value plus the correction or error to be estimated.
-This form seems more natural for the estimation problems.</p><p>The linearized version of the measurement residual:
-$$
-Z_k - h(X_k) = Z_k - h(\hat{X}_k - x_k) \approx Z_k - h(\hat{X}_k) + H_k x_k = H_k x_k - z_k \\
-\text{with } H_k = \left.\frac{\partial h(X)}{\partial X}\right\vert_{\hat{X}_k} \text{ and } z_k = h(\hat{X}_k) - Z_k
+h(X_k) - Z_k = h(\hat{X}_k + x_k) - Z_k \approx h(\hat{X}_k) + H_k x_k - Z_k = H_k x_k - z_k \\
+\text{with } H_k = \left.\frac{\partial h(X)}{\partial X}\right\vert_{\hat{X}_k} \text{ and } z_k = Z_k - h(\hat{X}_k)
 $$</p><p>The linearized version of the time propagation equation:
 $$
 X_{k + 1} = f_k(X_k, W_k) \\
-\hat{X}_{k + 1} - x_{k + 1} = f_k(\hat{X}_k - x_k, \hat{W}_k - w_k) \approx f_k(\hat{X}_k, \hat{W}_k) - F_k x_k - G_k w_k \\
+\hat{X}_{k + 1} + x_{k + 1} = f_k(\hat{X}_k + x_k, \hat{W}_k + w_k) \approx f_k(\hat{X}_k, \hat{W}_k) + F_k x_k + G_k w_k \\
 x_{k + 1} = F_k x_k + G_k w_k + u_k \\
 \text{with } F_k = \left.\frac{\partial f(X, W)}{\partial X}\right\vert_{\hat{X}_k, \hat{W}_k}
 , G_k = \left.\frac{\partial f(X, W)}{\partial W}\right\vert_{\hat{X}_k, \hat{W}_k}
-, u_k = \hat{X}_{k + 1} - f_k(\hat{X}_k, \hat{W}_k)
+, u_k = f_k(\hat{X}_k, \hat{W}_k) - \hat{X}_{k + 1}
 $$</p><h2 id=summary-of-the-linearized-subproblem>Summary of the linearized subproblem
 <a class=heading-link href=#summary-of-the-linearized-subproblem><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h2><p>The linearized cost function
@@ -94,32 +92,32 @@ $$
 x_{k + 1} = F_k x_k + G_k w_k + u_k
 $$</p><p>Where all matrices and vectors have the following values:
 $$
-x_0^- = \hat{X}_0 - X_0^- \\
-z_k = h(\hat{X}_k) - Z_k \\
+x_0^- = X_0^- - \hat{X}_0 \\
+z_k = Z_k - h(\hat{X}_k)\\
 H_k = \left.\frac{\partial h(X)}{\partial X}\right\vert_{\hat{X}_k} \\
-w_k^- = \hat{W}_k \\
+w_k^- = -\hat{W}_k \\
 F_k = \left.\frac{\partial f(X, W)}{\partial X}\right\vert_{\hat{X}_k, \hat{W}_k} \\
 G_k = \left.\frac{\partial f(X, W)}{\partial W}\right\vert_{\hat{X}_k, \hat{W}_k} \\
-u_k = \hat{X}_{k + 1} - f_k(\hat{X}_k, \hat{W}_k)
+u_k = f_k(\hat{X}_k, \hat{W}_k) - \hat{X}_{k + 1}
 $$</p><p>Solution $x_k$ and $w_k$ to it is found using the linear smoother algorithm summarized <a href=https://nmayorov.github.io/posts/rts_as_optimization/#summary-of-the-algorithm>here</a>.</p><h1 id=step-selection-for-the-estimate-update>Step selection for the estimate update
 <a class=heading-link href=#step-selection-for-the-estimate-update><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>After the solution $x_k$ and $w_k$ to the subproblem is obtained the estimates are updated as:
 $$
-\hat{X}_k \leftarrow \hat{X}_k - \alpha x_k \\
-\hat{W}_k \leftarrow \hat{W}_k - \alpha w_k
+\hat{X}_k \leftarrow \hat{X}_k + \alpha x_k \\
+\hat{W}_k \leftarrow \hat{W}_k + \alpha w_k
 $$
-Where $0 &lt; \alpha \leq 1$ is selected such to decrease the cost function and violation of the constraints.</p><p>The idea is to monitor a merit function which combines the cost function with constraint violation $l_1$-norm [1], section 11.2:
+Where $0 &lt; \alpha \leq 1$ is selected such as to decrease the cost function and violation of the constraints.</p><p>The idea is to monitor a merit function which combines the cost function with constraint violation $l_1$-norm [1], section 11.2:
 $$
 \Phi(X, W; \mu) = E(X, W) + \mu \sum_{k = 0}^{N - 1} \left\lVert X_{k + 1} - f_k(X_k, W_k) \right\rVert_1
 $$
 A proper value for $\mu$ is generally unknown and must be adjusted during iterations (increasing only).
 The whole theory is quite involved and requires experimentation.
-For now I just say that we adjust $\mu$ and select $\alpha$ on each iteration such as to drive constraints violations to zero while improving the cost function (at a certain level of constraints violation).
-The simplest strategy of selecting $\alpha = 1$ might also be effective because a good initial guess is available.</p><h1 id=initialization-and-termination>Initialization and termination
+For now I just say that we adjust $\mu$ and select $\alpha$ on each iteration such as to drive constraints violation to zero while improving the cost function (at a certain level of constraints violation).
+The simplest strategy of selecting $\alpha = 1$ might also be effective because a good initial guess is typically available.</p><h1 id=initialization-and-termination>Initialization and termination
 <a class=heading-link href=#initialization-and-termination><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>Numerical optimization methods are sensitive to the initial guess &ndash; they search a local minimum in its vicinity.
 In our problem we can get a good initial guess on $X_k$ by estimating them with an Extended Kalman Filter.
-For the noises $W_k$ a natural guess is just zero.</p><p>There are several possible criteria for stopping the iterations:</p><ol><li>The cost function decrease on the last iteration is small compared to the cost function itself</li><li>The correction of $X_k$ and $W_k$ on the last iteration is small compared to their norm</li><li>The norm of the of the gradient of $E$ is small</li></ol><p>It might be necessary to combine criteria 1, 2, 3 with a check on the constraints violation norm
+For the noises $W_k$ a natural guess is just zero.</p><p>There are several possible criteria for stopping the iterations:</p><ol><li>The cost function decrease on the last iteration is small compared to the cost function itself</li><li>The correction of $X_k$ and $W_k$ on the last iteration is small compared to their norm</li><li>The norm of the of the gradient of $E$ is small</li></ol><p>It might be necessary to combine these criteria with a check on the constraints violation norm.
 Selecting a proper criteria requires experimentation as well.</p><h1 id=error-covariance-estimation>Error covariance estimation
 <a class=heading-link href=#error-covariance-estimation><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>Error covariance estimates for $X_k$ and $W_k$ are taken from the linear smoother output from the last iteration.</p><h1 id=conclusion>Conclusion
