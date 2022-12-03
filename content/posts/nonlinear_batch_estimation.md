@@ -87,28 +87,26 @@ First introduce convenient notation. Let
 * $\hat{X}_k, \hat{W}_k$ be current estimates of $X_k$ and $W_k$
 * $x_k, w_k$ be correction to the current estimates
 
-To conform to the estimation reasoning like in Extended Kalman Filter we define relation for the linearization as 
+The linearization relation is defined as:
 $$
-\hat{X}_k = X_k + x_k \\\\
-\hat{W}_k = W_k + w_k
+X_k = \hat{X}_k + x_k \\\\
+W_k = \hat{W}_k + w_k
 $$
-That is the current estimate equals the true value plus the correction or error to be estimated.
-This form seems more natural for the estimation problems.
 
 The linearized version of the measurement residual:
 $$
-Z_k - h(X_k) = Z_k - h(\hat{X}_k - x_k) \approx Z_k - h(\hat{X}_k) + H_k x_k = H_k x_k - z_k \\\\
-\text{with } H_k = \left.\frac{\partial h(X)}{\partial X}\right\vert\_{\hat{X}_k} \text{ and } z_k = h(\hat{X}_k) - Z_k
+h(X_k) - Z_k = h(\hat{X}_k + x_k) - Z_k \approx h(\hat{X}_k) + H_k x_k - Z_k = H_k x_k - z_k \\\\
+\text{with } H_k = \left.\frac{\partial h(X)}{\partial X}\right\vert\_{\hat{X}_k} \text{ and } z_k = Z_k - h(\hat{X}_k)
 $$
 
 The linearized version of the time propagation equation:
 $$
 X_{k + 1} = f_k(X_k, W_k) \\\\
-\hat{X}_{k + 1} - x\_{k + 1} = f_k(\hat{X}_k - x_k, \hat{W}_k - w_k) \approx f_k(\hat{X}_k, \hat{W}_k) - F_k x_k - G_k w_k \\\\
+\hat{X}_{k + 1} + x\_{k + 1} = f_k(\hat{X}_k + x_k, \hat{W}_k + w_k) \approx f_k(\hat{X}_k, \hat{W}_k) + F_k x_k + G_k w_k \\\\
 x\_{k + 1} = F_k x_k + G_k w_k + u_k \\\\
 \text{with } F_k = \left.\frac{\partial f(X, W)}{\partial X}\right\vert\_{\hat{X}_k, \hat{W}_k}
 , G_k = \left.\frac{\partial f(X, W)}{\partial W}\right\vert\_{\hat{X}_k, \hat{W}_k}
-, u_k = \hat{X}\_{k + 1} - f_k(\hat{X}_k, \hat{W}_k)
+, u_k = f_k(\hat{X}_k, \hat{W}_k) - \hat{X}\_{k + 1}
 $$
 
 ## Summary of the linearized subproblem
@@ -128,13 +126,13 @@ $$
 
 Where all matrices and vectors have the following values:
 $$
-x_0^- = \hat{X}_0 - X_0^- \\\\
-z_k = h(\hat{X}_k) - Z_k \\\\
+x_0^- = X_0^- - \hat{X}_0 \\\\
+z_k = Z_k - h(\hat{X}_k)\\\\
 H_k = \left.\frac{\partial h(X)}{\partial X}\right\vert\_{\hat{X}_k} \\\\
-w_k^- = \hat{W}_k \\\\
+w_k^- = -\hat{W}_k \\\\
 F_k = \left.\frac{\partial f(X, W)}{\partial X}\right\vert\_{\hat{X}_k, \hat{W}_k} \\\\
 G_k = \left.\frac{\partial f(X, W)}{\partial W}\right\vert\_{\hat{X}_k, \hat{W}_k} \\\\
-u_k = \hat{X}\_{k + 1} - f_k(\hat{X}_k, \hat{W}_k)
+u_k = f_k(\hat{X}_k, \hat{W}_k) - \hat{X}\_{k + 1}
 $$
 
 Solution $x_k$ and $w_k$ to it is found using the linear smoother algorithm summarized [here]({{<ref "/content/posts/rts_as_optimization.md#summary-of-the-algorithm">}}).
@@ -143,10 +141,10 @@ Solution $x_k$ and $w_k$ to it is found using the linear smoother algorithm summ
 
 After the solution $x_k$ and $w_k$ to the subproblem is obtained the estimates are updated as:
 $$
-\hat{X}_k \leftarrow \hat{X}_k - \alpha x_k \\\\
-\hat{W}_k \leftarrow \hat{W}_k - \alpha w_k
+\hat{X}_k \leftarrow \hat{X}_k + \alpha x_k \\\\
+\hat{W}_k \leftarrow \hat{W}_k + \alpha w_k
 $$
-Where $0 < \alpha \leq 1$ is selected such to decrease the cost function and violation of the constraints.
+Where $0 < \alpha \leq 1$ is selected such as to decrease the cost function and violation of the constraints.
 
 The idea is to monitor a merit function which combines the cost function with constraint violation $l_1$-norm [1], section 11.2:
 $$
@@ -154,8 +152,8 @@ $$
 $$
 A proper value for $\mu$ is generally unknown and must be adjusted during iterations (increasing only).
 The whole theory is quite involved and requires experimentation.
-For now I just say that we adjust $\mu$ and select $\alpha$ on each iteration such as to drive constraints violations to zero while improving the cost function (at a certain level of constraints violation).
-The simplest strategy of selecting $\alpha = 1$ might also be effective because a good initial guess is available.
+For now I just say that we adjust $\mu$ and select $\alpha$ on each iteration such as to drive constraints violation to zero while improving the cost function (at a certain level of constraints violation).
+The simplest strategy of selecting $\alpha = 1$ might also be effective because a good initial guess is typically available.
 
 # Initialization and termination
 
@@ -169,7 +167,7 @@ There are several possible criteria for stopping the iterations:
 2. The correction of $X_k$ and $W_k$ on the last iteration is small compared to their norm
 3. The norm of the of the gradient of $E$ is small
 
-It might be necessary to combine criteria 1, 2, 3 with a check on the constraints violation norm
+It might be necessary to combine these criteria with a check on the constraints violation norm.
 Selecting a proper criteria requires experimentation as well.
 
 # Error covariance estimation
