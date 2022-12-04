@@ -50,7 +50,7 @@ One established method of solving it called sequential quadratic programming (SQ
 4. Repeat until convergence
 
 To form the mentioned local quadratic approximation, the gradient (gradient of $f$ might be used with the equivalent result) and the Hessian of the Lagrange function needs to be formed.
-The method we will apply differs in how we form the Hessian approximation and might be called a Gauss-Newton approximation of the SQP method.
+The method we apply differs in how the Hessian approximation is formed and might be called a Gauss-Newton approximation to the SQP method.
 
 In a nonlinear least-squares problem the cost function has the form
 $$
@@ -58,24 +58,24 @@ f(x) = \frac{1}{2} r(x)^T r(x)
 $$
 The Jacobian matrix of $r(x)$ is defined as
 $$
-J(x) = \begin{bmatrix} \nabla_x r_1(x) & \nabla_x r_2(x) & \ldots & \nabla_x r_n(x) \end{bmatrix}^T
+J(x) = \begin{bmatrix} \nabla r_1(x) & \nabla r_2(x) & \ldots & \nabla r_n(x) \end{bmatrix}^T
 $$
 Then the gradient and Gauss-Newton approximation of the Hessian are:
 $$
-\nabla_x f(x) = J^T r(x) \\\\
-\nabla^2_{xx} f(x) \approx J(x)^T J(x)
+\nabla f(x) = J^T r(x) \\\\
+\nabla^2 f(x) \approx J(x)^T J(x)
 $$
-Opposed to SQP method we also don't include the Hessian of the constraints, i. e. form a quadratic model for the cost function, not for the Lagrangian.
+Opposed to the SQP method we also neglect the second derivatives of the constraints, i. e. form a quadratic model for the cost function, not for the Lagrangian.
 
 With these approximations the quadratic subproblem is
 $$
 \min_{p_i} (r_i + J_i p_i)^T (r_i + J_i p_i) \text{ subject to } c_i + A_i p_i = 0 \\\\
-\text{with } r_i = r(x_i), J_i = J(x_i), c_i = c(x_i), A_i = \nabla_x c(x) \vert_{x_i}
+\text{with } r_i = r(x_i), J_i = J(x_i), c_i = c(x_i), A_i = \nabla c(x) \vert_{x_i}
 $$
 Logic of the algorithm iterations remain the same.
 
 It must be said that the proposed method is not widely known. 
-However my intuition and limited experience tells me that it is a legit approach akin to Gauss-Newton method of solving unconstrained nonlinear least squares.
+However my intuition and limited experience tells me that it is a legit approach similar to Gauss-Newton method of solving unconstrained nonlinear least squares.
 
 For our specific problem the linear subproblem formulated above is solved by a Kalman smoother.
 
@@ -97,12 +97,12 @@ D(g(x); l) \coloneqq \lim\_{\epsilon \rightarrow 0} \frac{g(x + \epsilon l) - g(
 $$
 The derivative of the introduced merit function in the direction $p_i$ (which satisfies linearized constraints!) can be shown to be ([1], section 18.3)
 $$
-D(\phi(x_i; \mu); p_i) = \nabla f_i^T p_i - \mu \lVert c(x) \rVert_1
+D(\phi(x_i; \mu); p_i) = \nabla f_i^T p_i - \mu \lVert c_i \rVert_1
 $$
 In order to $p_i$ be the descent direction for the merit function the directional derivative must be negative.
 This can be achieved by selecting large enough $\mu$.
 Informally it means that if necessary the optimizer must take steps which don't reduce the cost function, but only constraint violation.
-The specific strategy of selecting $\mu$ suggested in [1] section 18.3 is explained next.
+The specific strategy of selecting $\mu$ suggested in [1] (section 18.3) is explained next.
 
 Using the quadratic model $q(p)$ of $f(x)$ and linear model of $c(x)$ near $x_i$ it is possible to estimate the change of the merit function for step $p_i$:
 $$
