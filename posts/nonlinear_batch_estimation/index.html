@@ -6,7 +6,7 @@ Model description Link to heading The state estimation problem in a nonlinear sy
 <label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>Posts</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://nmayorov.github.io/posts/nonlinear_batch_estimation/>Nonlinear batch estimation</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
 <time datetime=2022-11-30T00:00:00Z>November 30, 2022</time></span>
 <span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
-6-minute read</span></div></div></header><div><p>In this note I present a development of nonlinear batch estimation algorithm.</p><h1 id=model-description>Model description
+9-minute read</span></div></div></header><div><p>In this note I present a development of nonlinear batch estimation algorithm.</p><h1 id=model-description>Model description
 <a class=heading-link href=#model-description><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>The state estimation problem in a nonlinear system is considered.
 The formulations is analogous to the <a href=https://nmayorov.github.io/posts/rts_as_optimization/#problem-formulation>linear case</a>, but with nonlinear transition and measurement equations.
@@ -58,8 +58,63 @@ $$
 \text{with } r_i = r(x_i), J_i = J(x_i), c_i = c(x_i), A_i = \nabla_x c(x) \vert_{x_i}
 $$
 Logic of the algorithm iterations remain the same.</p><p>It must be said that the proposed method is not widely known.
-However my intuition and limited experience tells me that it is a legit approach akin to Gauss-Newton method of solving unconstrained nonlinear least squares.</p><p>For our specific problem the linear subproblem formulated above is solved by a Kalman smoother.
-The details will be presented in the next section.</p><h1 id=constructing-the-linearized-subproblem>Constructing the linearized subproblem
+However my intuition and limited experience tells me that it is a legit approach akin to Gauss-Newton method of solving unconstrained nonlinear least squares.</p><p>For our specific problem the linear subproblem formulated above is solved by a Kalman smoother.</p><h1 id=merit-function-and-line-search>Merit function and line search
+<a class=heading-link href=#merit-function-and-line-search><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>To guarantee convergence of a nonlinear optimization method a step $p$ obtained from a linear subproblem must be applied with a properly selected multiplier as $\alpha_i p_i$.
+In constrained optimization there are 2 objectives: minimize the cost function and satisfy the constraints.
+One approach to account for both ot them is to consider a merit function ([1], section 11.2) with $\mu > 0$:
+$$
+\phi(x; \mu) = f(x) + \mu \lVert c(x) \rVert_1
+$$
+The parameter $\alpha$ is selected to achieve a sufficient decrease of $\phi(x; \mu)$ (the Armijo condition) for some $0 &lt; \eta &lt; 1$:
+$$
+\phi(x_i + \alpha_i p_i; \mu) \leq \phi(x_i; \mu) + \eta \alpha_i D(\phi(x_i; \mu); p_i)
+$$
+Where $D(g(x); l)$ is a directional derivative of $g(x)$ in direction $l$:
+$$
+D(g(x); l) = \lim_{\epsilon \rightarrow 0} \frac{g(x + \epsilon l) - g(x)}{\epsilon}
+$$
+The derivative of the introduced merit function in the direction $p_i$ (which satisfies linearized constraints!) can be shown to be ([1], section 18.3)
+$$
+D(\phi(x_i; \mu); p_i) = \nabla f_i^T p_i - \mu \lVert c(x) \rVert_1
+$$
+In order to $p_i$ be the descent direction for the merit function the directional derivative must be negative.
+This can be achieved by selecting large enough $\mu$.
+Informally it means that if necessary the optimizer must take steps which don&rsquo;t reduce the cost function, but only constraint violation.
+The specific strategy of selecting $\mu$ suggested in [1] section 18.3 is explained next.</p><p>Using the quadratic model $q(p)$ of $f(x)$ and linear model of $c(x)$ near $x_i$ it is possible to estimate the change of the merit function for step $p_i$:
+$$
+\phi(x_i + p_i; \mu) - \phi(x_i) \approx q_i(p_i) + \mu \lVert c_i + A_i p_i \rVert_1 - q_i(0) - \mu \lVert c_i \rVert_1 = q_i(p_i) - q_i(0) - \mu \lVert c_i \rVert_1
+$$
+The aim is to have this change sufficiently negative
+$$
+q_i(p_i) - q_i(0) - \mu \lVert c_i \rVert_1 \leq -\rho \mu \lVert c_i \rVert_1
+$$
+for some $0 &lt; \rho &lt; 1$. From this the inequality for $\mu$ follows
+$$
+\mu \geq \frac{q_i(p_i) - q_i(0)}{(1 - \rho) \lVert c_i \rVert_1} = \frac{\nabla f_i^T p_i + (1/2) p_i^T H_i p_i}{(1 - \rho) \lVert c_i \rVert_1}
+$$
+Where $H_i$ is the Hessian of the Lagrange function or its approximation evaluated at $x_i$.</p><p>If $\mu$ satisfies the above inequality and $H_i$ is positive semidefinite we have for the directional derivative
+$$
+D(\phi(x_i; \mu); p_i) \leq -\rho \mu \lVert c_i \rVert_1 &lt; 0
+$$
+Meaning that $p_i$ is a descent direction for the merit function, which is a requirement for the line search procedure.
+Note that the above inequality holds even when $\mu$ is computed without the Hessian part.
+However usage of the second order information results in better $\mu$ selection and larger steps.</p><h2 id=summary-of-the-algorithm-for-mu-selection>Summary of the algorithm for $\mu$ selection
+<a class=heading-link href=#summary-of-the-algorithm-for-mu-selection><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>If the current $\mu$ already satisfies the inequality it must not be changed.
+This simple algorithm follows:</p><ol><li>Start with $\mu_0 = 1$</li><li>On each iteration set $\mu_i = \max\left(\mu_{i - 1}, \dfrac{q_i(p_i) - q(0)}{(1 - \rho) \lVert c_i \rVert_1} \right)$</li></ol><h2 id=summary-of-the-line-search-algorithm>Summary of the line search algorithm
+<a class=heading-link href=#summary-of-the-line-search-algorithm><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>To find $\alpha_i$ which satisfies the sufficient decrease condition of the merit function the following algorithm is used:</p><ol><li>Set $\alpha_i = 1$</li><li>Compute the directional derivatives $D_i \coloneqq D(\phi(x_i; \mu); p_i)$</li><li>While $\phi(x_i + \alpha_i p_i; \mu) > \phi(x_i; \mu) + \eta \alpha_i D_i$ set $\alpha_i \leftarrow \tau \alpha_i$ for some $0 &lt; \tau &lt; 1$</li></ol><p>In the end the estimate is updated as
+$$
+x_{i + 1} = x_i + \alpha_i p_i
+$$</p><h2 id=numerical-values-of-the-algorithm-constants>Numerical values of the algorithm constants
+<a class=heading-link href=#numerical-values-of-the-algorithm-constants><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>The following reasonable values might be used:
+$$
+\eta = 0.5 \\
+\rho = 0.5 \\
+\tau = 0.5
+$$</p><h1 id=constructing-the-linearized-subproblem>Constructing the linearized subproblem
 <a class=heading-link href=#constructing-the-linearized-subproblem><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>First introduce convenient notation. Let</p><ul><li>$\hat{X}_k, \hat{W}_k$ be current estimates of $X_k$ and $W_k$</li><li>$x_k, w_k$ be correction to the current estimates</li></ul><p>The linearization relation is defined as:
 $$
@@ -99,21 +154,13 @@ w_k^- = -\hat{W}_k \\
 F_k = \left.\frac{\partial f(X, W)}{\partial X}\right\vert_{\hat{X}_k, \hat{W}_k} \\
 G_k = \left.\frac{\partial f(X, W)}{\partial W}\right\vert_{\hat{X}_k, \hat{W}_k} \\
 u_k = f_k(\hat{X}_k, \hat{W}_k) - \hat{X}_{k + 1}
-$$</p><p>Solution $x_k$ and $w_k$ to it is found using the linear smoother algorithm summarized <a href=https://nmayorov.github.io/posts/rts_as_optimization/#summary-of-the-algorithm>here</a>.</p><h1 id=step-selection-for-the-estimate-update>Step selection for the estimate update
-<a class=heading-link href=#step-selection-for-the-estimate-update><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h1><p>After the solution $x_k$ and $w_k$ to the subproblem is obtained the estimates are updated as:
+$$</p><p>Solution $x_k$ and $w_k$ to it is found using the linear smoother algorithm summarized <a href=https://nmayorov.github.io/posts/rts_as_optimization/#summary-of-the-algorithm>here</a>.
+Then the estimates are updated as:
 $$
 \hat{X}_k \leftarrow \hat{X}_k + \alpha x_k \\
 \hat{W}_k \leftarrow \hat{W}_k + \alpha w_k
 $$
-Where $0 &lt; \alpha \leq 1$ is selected such as to decrease the cost function and violation of the constraints.</p><p>The idea is to monitor a merit function which combines the cost function with constraint violation $l_1$-norm [1], section 11.2:
-$$
-\Phi(X, W; \mu) = E(X, W) + \mu \sum_{k = 0}^{N - 1} \left\lVert X_{k + 1} - f_k(X_k, W_k) \right\rVert_1
-$$
-A proper value for $\mu$ is generally unknown and must be adjusted during iterations (increasing only).
-The whole theory is quite involved and requires experimentation.
-For now I just say that we adjust $\mu$ and select $\alpha$ on each iteration such as to drive constraints violation to zero while improving the cost function (at a certain level of constraints violation).
-The simplest strategy of selecting $\alpha = 1$ might also be effective because a good initial guess is typically available.</p><h1 id=initialization-and-termination>Initialization and termination
+Where $0 &lt; \alpha \leq 1$ is selected as described in the previous section.</p><h1 id=initialization-and-termination>Initialization and termination
 <a class=heading-link href=#initialization-and-termination><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>Numerical optimization methods are sensitive to the initial guess &ndash; they search a local minimum in its vicinity.
 In our problem we can get a good initial guess on $X_k$ by estimating them with an Extended Kalman Filter.
