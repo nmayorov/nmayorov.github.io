@@ -60,7 +60,7 @@ $$
 Logic of the algorithm iterations remain the same.</p><p>It must be said that the proposed method is not widely known.
 However my intuition and limited experience tells me that it is a legit approach akin to Gauss-Newton method of solving unconstrained nonlinear least squares.</p><p>For our specific problem the linear subproblem formulated above is solved by a Kalman smoother.</p><h1 id=merit-function-and-line-search>Merit function and line search
 <a class=heading-link href=#merit-function-and-line-search><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h1><p>To guarantee convergence of a nonlinear optimization method a step $p$ obtained from a linear subproblem must be applied with a properly selected multiplier as $\alpha_i p_i$.
+<span class=sr-only>Link to heading</span></a></h1><p>To guarantee convergence of a nonlinear optimization method a step $p$ obtained from a linear subproblem must be applied with a properly selected multiplier as $\alpha p$.
 In constrained optimization there are 2 objectives: minimize the cost function and satisfy the constraints.
 One approach to account for both ot them is to consider a merit function ([1], section 11.2) with $\mu > 0$:
 $$
