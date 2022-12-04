@@ -219,20 +219,24 @@ $$
 $$
 Where $0 < \alpha \leq 1$ is selected as described in the previous section.
 
-# Initialization and termination
+# Initialization
 
 Numerical optimization methods are sensitive to the initial guess -- they search a local minimum in its vicinity.
 In our problem we can get a good initial guess on $X_k$ by estimating them with an Extended Kalman Filter.
 For the noises $W_k$ a natural guess is just zero.
 
-There are several possible criteria for stopping the iterations:
+# Termination
 
-1. The cost function decrease on the last iteration is small compared to the cost function itself
-2. The correction of $X_k$ and $W_k$ on the last iteration is small compared to their norm
-3. The norm of the of the gradient of $E$ is small
+The iterations terminate if two criteria are satisfied
 
-It might be necessary to combine these criteria with a check on the constraints violation norm.
-Selecting a proper criteria requires experimentation as well.
+1. The relative reduction of the cost functions is less than $t_f$: 
+   $$E(\hat{X}^{i}, \hat{W}^{i}) < (1 + t_f) E(\hat{X}^{i - 1}, \hat{W}^{i - 1}),$$
+   where superscript denotes iteration index
+2. Relative violation of the time transition equations is less than $t_c$ for each epoch $k$: 
+   $$\left|\hat{X}_{k + 1} - f_k(\hat{X}_k, \hat{W}_k) \right| < t_c \max\left(\left|\hat{X}\_{k + 1}\right|, 1 \right),$$
+   where operations and inequalities are applied elementwise
+
+Parameters $t_f$ and $t_c$ are passed to the optimization subroutine.
 
 # Error covariance estimation
 
@@ -240,8 +244,8 @@ Error covariance estimates for $X_k$ and $W_k$ are taken from the linear smoothe
 
 # Conclusion
 
-I've presented an outline of the nonlinear batch estimation algorithm which uses linear Kalman smoother on each iteration.
-This is a preliminarily version and I will fill in missing details as I get practical experience with it.
+I've presented a nonlinear batch estimation algorithm which solves a nonlinear optimization problem with a help of linear Kalman smoother for iteration subproblems.
+The algorithm has solid theoretical foundations and gives reliable and easy to interpret estimates when converged.
 
 # References
 
