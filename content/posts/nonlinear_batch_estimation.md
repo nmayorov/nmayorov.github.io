@@ -78,7 +78,83 @@ It must be said that the proposed method is not widely known.
 However my intuition and limited experience tells me that it is a legit approach akin to Gauss-Newton method of solving unconstrained nonlinear least squares.
 
 For our specific problem the linear subproblem formulated above is solved by a Kalman smoother.
-The details will be presented in the next section.
+
+# Merit function and line search
+
+To guarantee convergence of a nonlinear optimization method a step $p$ obtained from a linear subproblem must be applied with a properly selected multiplier as $\alpha p$.
+In constrained optimization there are 2 objectives: minimize the cost function and satisfy the constraints.
+One approach to account for both ot them is to consider a merit function ([1], section 11.2) with $\mu > 0$:
+$$
+\phi(x; \mu) = f(x) + \mu \lVert c(x) \rVert_1
+$$
+The parameter $\alpha$ is selected to achieve a sufficient decrease of $\phi(x; \mu)$ (the Armijo condition) for some $0 < \eta < 1$:
+$$
+\phi(x_i + \alpha_i p_i; \mu) \leq \phi(x_i; \mu) + \eta \alpha_i D(\phi(x_i; \mu); p_i)
+$$
+Where $D(g(x); l)$ is a directional derivative of $g(x)$ in direction $l$:
+$$
+D(g(x); l) \coloneqq \lim\_{\epsilon \rightarrow 0} \frac{g(x + \epsilon l) - g(x)}{\epsilon}
+$$
+The derivative of the introduced merit function in the direction $p_i$ (which satisfies linearized constraints!) can be shown to be ([1], section 18.3)
+$$
+D(\phi(x_i; \mu); p_i) = \nabla f_i^T p_i - \mu \lVert c(x) \rVert_1
+$$
+In order to $p_i$ be the descent direction for the merit function the directional derivative must be negative.
+This can be achieved by selecting large enough $\mu$.
+Informally it means that if necessary the optimizer must take steps which don't reduce the cost function, but only constraint violation.
+The specific strategy of selecting $\mu$ suggested in [1] section 18.3 is explained next.
+
+Using the quadratic model $q(p)$ of $f(x)$ and linear model of $c(x)$ near $x_i$ it is possible to estimate the change of the merit function for step $p_i$:
+$$
+\phi(x_i + p_i; \mu) - \phi(x_i) \approx q_i(p_i) + \mu \lVert c_i + A_i p_i \rVert_1 - q_i(0) - \mu \lVert c_i \rVert_1 = q_i(p_i) - q_i(0) - \mu \lVert c_i \rVert_1
+$$
+The aim is to have this change sufficiently negative
+$$
+q_i(p_i) - q_i(0) - \mu \lVert c_i \rVert_1 \leq -\rho \mu \lVert c_i \rVert_1
+$$
+for some $0 < \rho < 1$. From this the inequality for $\mu$ follows
+$$
+\mu \geq \frac{q_i(p_i) - q_i(0)}{(1 - \rho) \lVert c_i \rVert_1} = \frac{\nabla f_i^T p_i + (1/2) p_i^T H_i p_i}{(1 - \rho) \lVert c_i \rVert_1}
+$$
+Where $H_i$ is the Hessian of the Lagrange function or its approximation evaluated at $x_i$.
+
+If $\mu$ satisfies the above inequality and $H_i$ is positive semidefinite we have for the directional derivative 
+$$
+D(\phi(x_i; \mu); p_i) \leq -\rho \mu \lVert c_i \rVert_1 < 0
+$$
+Meaning that $p_i$ is a descent direction for the merit function, which is a requirement for the line search procedure.
+Note that the above inequality holds even when $\mu$ is computed without the Hessian part. 
+However usage of the second order information results in better $\mu$ selection and larger steps.
+
+## Summary of the algorithm for $\mu$ selection
+
+If the current $\mu$ already satisfies the inequality it must not be changed.
+This simple algorithm follows:
+
+1. Start with $\mu_0 = 1$
+2. On each iteration set $\mu_i = \max\left(\mu_{i - 1}, \dfrac{q_i(p_i) - q(0)}{(1 - \rho) \lVert c_i \rVert_1}  \right)$
+
+## Summary of the line search algorithm
+
+To find $\alpha_i$ which satisfies the sufficient decrease condition of the merit function the following algorithm is used:
+
+1. Set $\alpha_i = 1$
+3. Compute the directional derivatives $D_i \coloneqq D(\phi(x_i; \mu); p_i)$
+2. While $\phi(x_i + \alpha_i p_i; \mu) > \phi(x_i; \mu) + \eta \alpha_i D_i$ set $\alpha_i \leftarrow \tau \alpha_i$ for some $0 < \tau < 1$
+
+In the end the estimate is updated as 
+$$
+x_{i + 1} = x_i + \alpha_i p_i
+$$
+
+## Numerical values of the algorithm constants
+
+The following reasonable values might be used:
+$$
+\eta = 0.5 \\\\
+\rho = 0.5 \\\\
+\tau = 0.5
+$$
 
 # Constructing the linearized subproblem
 
@@ -136,24 +212,12 @@ u_k = f_k(\hat{X}_k, \hat{W}_k) - \hat{X}\_{k + 1}
 $$
 
 Solution $x_k$ and $w_k$ to it is found using the linear smoother algorithm summarized [here]({{<ref "/content/posts/rts_as_optimization.md#summary-of-the-algorithm">}}).
-
-# Step selection for the estimate update
-
-After the solution $x_k$ and $w_k$ to the subproblem is obtained the estimates are updated as:
+Then the estimates are updated as:
 $$
 \hat{X}_k \leftarrow \hat{X}_k + \alpha x_k \\\\
 \hat{W}_k \leftarrow \hat{W}_k + \alpha w_k
 $$
-Where $0 < \alpha \leq 1$ is selected such as to decrease the cost function and violation of the constraints.
-
-The idea is to monitor a merit function which combines the cost function with constraint violation $l_1$-norm [1], section 11.2:
-$$
-\Phi(X, W; \mu) = E(X, W) + \mu \sum_{k = 0}^{N - 1} \left\lVert X_{k + 1} - f_k(X_k, W_k) \right\rVert_1
-$$
-A proper value for $\mu$ is generally unknown and must be adjusted during iterations (increasing only).
-The whole theory is quite involved and requires experimentation.
-For now I just say that we adjust $\mu$ and select $\alpha$ on each iteration such as to drive constraints violation to zero while improving the cost function (at a certain level of constraints violation).
-The simplest strategy of selecting $\alpha = 1$ might also be effective because a good initial guess is typically available.
+Where $0 < \alpha \leq 1$ is selected as described in the previous section.
 
 # Initialization and termination
 
