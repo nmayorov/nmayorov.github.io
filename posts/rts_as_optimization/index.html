@@ -26,13 +26,13 @@ z_k = H_k x_k + v_k \\
 $$</p><p>All symbols above are indexed by integer epoch and have the following meanings:</p><ul><li>$x_k$ &ndash; state vector, shape $n \times 1$</li><li>$F_k$ &ndash; state transition matrix, shape $n \times n$</li><li>$w_k$ &ndash; process noise vector, shape $m \times 1$</li><li>$G_k$ &ndash; noise input matrix, shape $n \times m$</li><li>$z_k$ &ndash; measurement vector, shape $l \times 1$</li><li>$H_k$ &ndash; measurement matrix, shape $l \times n$</li><li>$v_k$ &ndash; measurement noise vector, shape $l \times 1$</li><li>$x_0^-$ &ndash; apriori state mean, shape $n \times 1$</li><li>$P_0^-$ &ndash; apriori state error covariance, shape $n \times n$</li><li>$Q_k$ &ndash; covariance of process noise, shape $m \times m$</li><li>$R_k$ &ndash; covariance of measurement noise, shape $l \times l$</li></ul><p>Additionally the following notation is used:</p><ul><li>$\operatorname{E} \ldots$ &ndash; operation of taking mean</li><li>$C \succ 0$ &ndash; matrix $C$ is positive definite</li></ul><p>The last 3 equations say that process and measurement noises are not time correlated and not correlated to each other.</p><p>The task is to find optimal estimates of $x_k$ for epochs $k = 0, 1, \ldots, N$ taking into account the system model and the observed measurements $z_0, z_1, \ldots, z_{N-1}$.</p><h1 id=defining-the-optimization-problem>Defining the optimization problem
 <a class=heading-link href=#defining-the-optimization-problem><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>We will determine optimal estimates of $x_k$ by minimizing a cost function.
-The proposed cost function will be quadratic in $x_k$ and expressed as a sum of terms of 3 kinds:</p><ol><li>A term for prior on $x_0$</li><li>Terms for measurements (associated with $z_k$)</li><li>Terms for the time propagation (relating $x_k$ and $x_{k+1}$)</li></ol><h2 id=case-of-square-g_k>Case of square $G_k$
-<a class=heading-link href=#case-of-square-g_k><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h2><p>In the transition equation we can define the effective noise term as
+The proposed cost function will be quadratic in $x_k$ and expressed as a sum of terms of 3 kinds:</p><ol><li>A term for prior on $x_0$</li><li>Terms for measurements (associated with $z_k$)</li><li>Terms for the time propagation (relating $x_k$ and $x_{k+1}$)</li></ol><p>In the transition equation we can define the effective noise term as
 $$w_k^\prime = G_k w_k$$
-$$\operatorname{E} w_k^\prime \left(w_k^\prime\right)^T = G_k Q_k G_k^T$$</p><p>If $G_k$ is square and invertible then $Q_k^\prime$ will be invertible too.
-It means that each state is influenced by the noise and there is no deterministic part in the state propagation.
-In this case the cost function can be defined naturally as follows:</p><p>$$
+$$Q_k^\prime \coloneqq \operatorname{E} w_k^\prime \left(w_k^\prime\right)^T = G_k Q_k G_k^T$$
+Depending on $G_k$ the matrix $Q_k^\prime$ can be positive definite and invertible or only positive semidefinite and singular.</p><h2 id=case-of-invertible-q_kprime>Case of invertible $Q_k^\prime$
+<a class=heading-link href=#case-of-invertible-q_kprime><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>In this case each state is influenced by noise and there is no deterministic part in the state propagation.
+The cost function can be defined naturally as follows:</p><p>$$
 \begin{split}
 J^\prime(x) =& \frac{1}{2} \left(x_0 - x_0^-\right)^T \left(P_0^-\right)^{-1} \left(x_0 - x_0^-\right) \\
 +& \frac{1}{2} \sum_{k = 0}^{N - 1} (H_k x_k - z_k)^T R_k^{-1} (H_k x_k - z_k) \\
@@ -44,10 +44,10 @@ The normal equation for it is a large positive definite tridiagonal system of $n
 It can be solved efficiently by a two-pass algorithm in a time linear in $N$.
 The resulting formulas can be interpreted as another form of a linear smoother (involving inverse covariance matrices).
 Details can be found in [1].</p><p>This formulation is quite simple and has a straightforward solution.
-Unfortunately the assumption of square $G_k$ and invertible $Q_k^\prime$ is limiting.
-Problems where the number of states is larger than the number of noise sources are very common in practice.
-There is no simple workaround for this issue and another approach needs to be developed.</p><h2 id=case-of-rectangular-g_k-with-m--n>Case of rectangular $G_k$ with $m &lt; n$
-<a class=heading-link href=#case-of-rectangular-g_k-with-m--n><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+Unfortunately the assumption of invertible $Q_k^\prime$ is limiting.
+The most common such case is when the number of states is larger that the number of noise source.
+There is no simple workaround for this issue and another approach needs to be developed.</p><h2 id=case-of-singular-q_kprime>Case of singular $Q_k^\prime$
+<a class=heading-link href=#case-of-singular-q_kprime><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h2><p>In this case the inverse of $Q_k^\prime$ can&rsquo;t be computed and thus the time propagation terms can&rsquo;t be formed directly.
 To overcome this problem the noise vectors should be considered as unknown variables which need to be estimated along with $x$.
 The following cost function is minimized:</p><p>$$

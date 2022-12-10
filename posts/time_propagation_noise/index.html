@@ -58,7 +58,7 @@ $$
 \dot{\hat{\psi}} = \tilde{\omega}
 $$</p><p>Here we have that the actual motion of the robot is deterministic and the estimation equations are stochastic.
 This situation occurs when the noisy measurements are used in the estimate time propagation equations.
-An important example is an Inertial Navigation System (INS), where noisy measurements of gyros and accelerometers are used to propagate the system state estimate (i. e. position, velocity and attitude).
+An important example is a strapdown Inertial Navigation System (INS), where noisy measurements of gyros and accelerometers are used to propagate the system state estimate (i. e. position, velocity and attitude).
 Our example in this section can be though of as a simplified INS.</p><h1 id=general-treatment-and-consequences-on-estimation-algorithms-design>General treatment and consequences on estimation algorithms design
 <a class=heading-link href=#general-treatment-and-consequences-on-estimation-algorithms-design><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>Let&rsquo;s write the state and estimate propagation equations in a general form for a state vector $x$ with a noise vector $w$.</p><p>For the control scenario:
@@ -88,8 +88,8 @@ Considering that $w$ is usually modelled as a zero mean noise, this difference i
 $$
 \dot{P} = F P F^T + G Q G^T
 $$
-where $Q$ is power spectral density matrix of the noise $w$.</p><p>We can see that there is no difference in estimation algorithms design besides whether noisy input is used in the estimate time propagation (&#171;navigation scenario&#187;) or not (&#171;control scenario&#187;).
-Mixed scenarios are possible too &ndash; with a conceptual understanding of the subject it&rsquo;s not difficult to properly design and reason about estimation algorithms in such cases too.</p><h1 id=conclusion>Conclusion
+where $Q$ is power spectral density matrix of the noise $w$.</p><p>We can see that there is no difference in estimation algorithms design besides whether noisy input is used in the estimate time propagation (&#171;navigation scenario&#187;) or not (&#171;control scenario&#187;).</p><p>Mixed scenarios are possible too &ndash; with a conceptual understanding of the subject it&rsquo;s not difficult to properly design and reason about estimation algorithms in such cases too.
+One interesting example is a gimbaled INS where accelerometers are kept horizontal on a gyro-stabilized platform.</p><h1 id=conclusion>Conclusion
 <a class=heading-link href=#conclusion><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>I&rsquo;ve highlighted that in estimation problems a noisy input can influence the true state time propagation or the state estimate time propagation.
 It doesn&rsquo;t change an estimation algorithm&rsquo;s objective or implementation logic, but it is useful to keep that in mind for clear intuitive engineering understanding of estimation theory and algorithms.
