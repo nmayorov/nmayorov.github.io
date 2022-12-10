@@ -57,15 +57,15 @@ The proposed cost function will be quadratic in $x_k$ and expressed as a sum of 
 2. Terms for measurements (associated with $z_k$)
 3. Terms for the time propagation (relating $x_k$ and $x_{k+1}$)
 
-## Case of square $G_k$
-
 In the transition equation we can define the effective noise term as 
 $$w_k^\prime = G_k w_k$$ 
-$$\operatorname{E} w_k^\prime \left(w_k^\prime\right)^T = G_k Q_k G_k^T$$
+$$Q_k^\prime \coloneqq \operatorname{E} w_k^\prime \left(w_k^\prime\right)^T = G_k Q_k G_k^T$$
+Depending on $G_k$ the matrix $Q_k^\prime$ can be positive definite and invertible or only positive semidefinite and singular.
 
-If $G_k$ is square and invertible then $Q_k^\prime$ will be invertible too.
-It means that each state is influenced by the noise and there is no deterministic part in the state propagation.
-In this case the cost function can be defined naturally as follows:
+## Case of invertible $Q_k^\prime$
+
+In this case each state is influenced by noise and there is no deterministic part in the state propagation.
+The cost function can be defined naturally as follows:
 
 $$
 \begin{split}
@@ -85,11 +85,11 @@ The resulting formulas can be interpreted as another form of a linear smoother (
 Details can be found in [1].
 
 This formulation is quite simple and has a straightforward solution.
-Unfortunately the assumption of square $G_k$ and invertible $Q_k^\prime$ is limiting.
-Problems where the number of states is larger than the number of noise sources are very common in practice.
+Unfortunately the assumption of invertible $Q_k^\prime$ is limiting.
+The most common such case is when the number of states is larger that the number of noise source.
 There is no simple workaround for this issue and another approach needs to be developed.
 
-## Case of rectangular $G_k$ with $m < n$
+## Case of singular $Q_k^\prime$
 
 In this case the inverse of $Q_k^\prime$ can't be computed and thus the time propagation terms can't be formed directly.
 To overcome this problem the noise vectors should be considered as unknown variables which need to be estimated along with $x$.
