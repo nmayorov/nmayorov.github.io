@@ -244,7 +244,7 @@ Of course it is not a rigorous proof, but the conclusion seems to be correct.
 There is also empirical evidence for that &ndash; $w_s$ estimates don&rsquo;t look at all as samples of a continuous function.</p><p>From the fact that $w^s$ is not continuos it follows that $\dot{x}^s = f(x_s, w_s)$ is not continuous as well.
 So for $x^s$ only continuity holds, its derivative is not continuous.</p><p>Discrete-time systems are usually built as discretization of continuous time systems.
 Thus $x_k^s$ can be though of as samples of continuous function $x^s(t)$.
-Probably there are proper notions of continuity for discrete-time variables, but I&rsquo;m not familiar with them.</p><h1 id=minor-generalization-of-the-model>Minor generalization of the model
+Probably there is a proper notion of continuity for discrete-time variables, but I&rsquo;m not familiar with it.</p><h1 id=minor-generalization-of-the-model>Minor generalization of the model
 <a class=heading-link href=#minor-generalization-of-the-model><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>When applying the linear smoother just derived to solve subproblems arising in nonlinear estimation a minor generalization of the model is required:</p><ol><li>Consider a deterministic control signal $u_k$ in the time propagation equations</li><li>Consider that the process noise vectors have known nonzero mean values $w_k^-$</li></ol><p>The Kalman prediction equation for the state then becomes
 $$
