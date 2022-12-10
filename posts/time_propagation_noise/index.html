@@ -9,7 +9,7 @@ I will illustrate the concept on a simple example. Consider a robot which can mo
 5-minute read</span></div></div></header><div><p>In this note I want to show that there are two possible scenarios how noisy input can influence state time propagation in estimation problems.
 This is not well articulated in classical literature and may create confusion when applying estimation algorithms to practical systems.</p><p>I will illustrate the concept on a simple example.
 Consider a robot which can move in the direction of its longitudinal axis and rotate.
-Its state is described by 4 variables (2D case):</p><ul><li>$x, y$ &ndash; euclidean coordinates in a selected global frame of reference</li><li>$v$ &ndash; velocity along the longitudinal axis</li><li>$\psi$ &ndash; heading angle relative to the global frame of reference</li></ul><p>The state variables follow the following differential equations:
+Its state is described by 4 variables (2D case):</p><ul><li>$x, y$ &ndash; euclidean coordinates in a selected global frame of reference</li><li>$v$ &ndash; velocity along the longitudinal axis</li><li>$\psi$ &ndash; heading angle relative to the global frame of reference</li></ul><p>The state variables follow the differential equations:
 $$
 \dot{x} = v \cos \psi \\
 \dot{y} = v \sin \psi \\
@@ -23,13 +23,13 @@ $$
 \tilde{a} = a + w_a \\
 \tilde{\omega} = \omega + w_\omega
 $$
-where $w_a$ and $w_\omega$ are random disturbances of acceleration and angular rate respectively.</p><p>The true state variables are stochastic and obeys the equations with disturbed acceleration and angular rate:
+where $w_a$ and $w_\omega$ are random disturbances of acceleration and angular rate respectively.</p><p>The true state variables are stochastic and obey the equations with disturbed acceleration and angular rate:
 $$
 \dot{x} = v \cos \psi \\
 \dot{y} = v \sin \psi \\
 \dot{v} = \tilde{a}\\
 \dot{\psi} = \tilde{\omega}
-$$</p><p>The estimation algorithm (like Extended Kalman Filter) executes the time propagation equations with nominal acceleration ang angular rate:
+$$</p><p>An estimation algorithm (like Extended Kalman Filter) executes the time propagation equations with nominal acceleration ang angular rate:
 $$
 \dot{\hat{x}} = \hat{v} \cos \hat{\psi} \\
 \dot{\hat{y}} = \hat{v} \sin \hat{\psi} \\
@@ -39,7 +39,7 @@ $$
 where $\hat{\cdot}$ denotes estimate of the corresponding variable.</p><p>Here we have that the actual motion of the robot is stochastic and the estimation equations are deterministic.
 This is how estimation problems and algorithms are usually formulated in literature.</p><h1 id=navigation-scenario>Navigation scenario
 <a class=heading-link href=#navigation-scenario><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h1><p>In this scenario the control signals to the robot are unknown (it can be controlled by an operator, for example), but acceleration and angular rate are measured by sensors installed on the robot as
+<span class=sr-only>Link to heading</span></a></h1><p>In this scenario the control signals to the robot are not set (it can be controlled by an operator, for example), but acceleration and angular rate are measured by sensors installed on the robot as
 $$
 \tilde{a} = a + w_a \\
 \tilde{\omega} = \omega + w_\omega
@@ -50,15 +50,15 @@ $$
 \dot{y} = v \sin \psi \\
 \dot{v} = a\\
 \dot{\psi} = \omega
-$$</p><p>The estimation algorithm executes the time propagation equations with measured acceleration and angular rate:
+$$</p><p>An estimation algorithm executes the time propagation equations with measured acceleration and angular rate:
 $$
 \dot{\hat{x}} = \hat{v} \cos \hat{\psi} \\
 \dot{\hat{y}} = \hat{v} \sin \hat{\psi} \\
 \dot{\hat{v}} = \tilde{a} \\
 \dot{\hat{\psi}} = \tilde{\omega}
 $$</p><p>Here we have that the actual motion of the robot is deterministic and the estimation equations are stochastic.
-This situation occurs when the noisy measurements are used in the time propagation equations.
-An important example is an Inertial Navigation System (INS), where noisy measurements of gyros and accelerometers are used to propagate the system state (i. e. position, velocity and attitude).
+This situation occurs when the noisy measurements are used in the estimate time propagation equations.
+An important example is an Inertial Navigation System (INS), where noisy measurements of gyros and accelerometers are used to propagate the system state estimate (i. e. position, velocity and attitude).
 Our example in this section can be though of as a simplified INS.</p><h1 id=general-treatment-and-consequences-on-estimation-algorithms-design>General treatment and consequences on estimation algorithms design
 <a class=heading-link href=#general-treatment-and-consequences-on-estimation-algorithms-design><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>Let&rsquo;s write the state and estimate propagation equations in a general form for a state vector $x$ with a noise vector $w$.</p><p>For the control scenario:
@@ -88,7 +88,7 @@ Considering that $w$ is usually modelled as a zero mean noise, this difference i
 $$
 \dot{P} = F P F^T + G Q G^T
 $$
-where $Q$ is power spectral density matrix of the noise $w$.</p><p>We can see that there is no difference in estimation algorithm design besides whether noisy input is used in the estimate time propagation (&#171;navigation scenario&#187;) or not (&#171;control scenario&#187;).
+where $Q$ is power spectral density matrix of the noise $w$.</p><p>We can see that there is no difference in estimation algorithms design besides whether noisy input is used in the estimate time propagation (&#171;navigation scenario&#187;) or not (&#171;control scenario&#187;).
 Mixed scenarios are possible too &ndash; with a conceptual understanding of the subject it&rsquo;s not difficult to properly design and reason about estimation algorithms in such cases too.</p><h1 id=conclusion>Conclusion
 <a class=heading-link href=#conclusion><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>I&rsquo;ve highlighted that in estimation problems a noisy input can influence the true state time propagation or the state estimate time propagation.
