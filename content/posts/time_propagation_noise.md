@@ -82,7 +82,7 @@ $$
 
 Here we have that the actual motion of the robot is deterministic and the estimation equations are stochastic.
 This situation occurs when the noisy measurements are used in the estimate time propagation equations. 
-An important example is an Inertial Navigation System (INS), where noisy measurements of gyros and accelerometers are used to propagate the system state estimate (i. e. position, velocity and attitude).
+An important example is a strapdown Inertial Navigation System (INS), where noisy measurements of gyros and accelerometers are used to propagate the system state estimate (i. e. position, velocity and attitude).
 Our example in this section can be though of as a simplified INS.
 
 # General treatment and consequences on estimation algorithms design
@@ -123,7 +123,9 @@ $$
 where $Q$ is power spectral density matrix of the noise $w$.
 
 We can see that there is no difference in estimation algorithms design besides whether noisy input is used in the estimate time propagation (<<navigation scenario>>) or not (<<control scenario>>).
-Mixed scenarios are possible too -- with a conceptual understanding of the subject it's not difficult to properly design and reason about estimation algorithms in such cases too.
+
+Mixed scenarios are possible too -- with a conceptual understanding of the subject it's not difficult to properly design and reason about estimation algorithms in such cases too. 
+One interesting example is a gimbaled INS where accelerometers are kept horizontal on a gyro-stabilized platform.
 
 # Conclusion
 
