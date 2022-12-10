@@ -15,7 +15,7 @@ Its state is described by 4 variables (2D case):
 * $v$ -- velocity along the longitudinal axis
 * $\psi$ -- heading angle relative to the global frame of reference
 
-The state variables follow the following differential equations:
+The state variables follow the differential equations:
 $$
 \dot{x} = v \cos \psi \\\\
 \dot{y} = v \sin \psi \\\\
@@ -35,7 +35,7 @@ $$
 $$
 where $w_a$ and $w_\omega$ are random disturbances of acceleration and angular rate respectively.
 
-The true state variables are stochastic and obeys the equations with disturbed acceleration and angular rate:
+The true state variables are stochastic and obey the equations with disturbed acceleration and angular rate:
 $$
 \dot{x} = v \cos \psi \\\\
 \dot{y} = v \sin \psi \\\\
@@ -43,7 +43,7 @@ $$
 \dot{\psi} = \tilde{\omega}
 $$
 
-The estimation algorithm (like Extended Kalman Filter) executes the time propagation equations with nominal acceleration ang angular rate:
+An estimation algorithm (like Extended Kalman Filter) executes the time propagation equations with nominal acceleration ang angular rate:
 $$
 \dot{\hat{x}} = \hat{v} \cos \hat{\psi} \\\\
 \dot{\hat{y}} = \hat{v} \sin \hat{\psi} \\\\
@@ -57,7 +57,7 @@ This is how estimation problems and algorithms are usually formulated in literat
 
 # Navigation scenario
 
-In this scenario the control signals to the robot are unknown (it can be controlled by an operator, for example), but acceleration and angular rate are measured by sensors installed on the robot as
+In this scenario the control signals to the robot are not set (it can be controlled by an operator, for example), but acceleration and angular rate are measured by sensors installed on the robot as
 $$
 \tilde{a} = a + w_a \\\\
 \tilde{\omega} = \omega + w_\omega
@@ -72,7 +72,7 @@ $$
 \dot{\psi} = \omega
 $$
 
-The estimation algorithm executes the time propagation equations with measured acceleration and angular rate:
+An estimation algorithm executes the time propagation equations with measured acceleration and angular rate:
 $$
 \dot{\hat{x}} = \hat{v} \cos \hat{\psi} \\\\
 \dot{\hat{y}} = \hat{v} \sin \hat{\psi} \\\\
@@ -81,8 +81,8 @@ $$
 $$
 
 Here we have that the actual motion of the robot is deterministic and the estimation equations are stochastic.
-This situation occurs when the noisy measurements are used in the time propagation equations. 
-An important example is an Inertial Navigation System (INS), where noisy measurements of gyros and accelerometers are used to propagate the system state (i. e. position, velocity and attitude).
+This situation occurs when the noisy measurements are used in the estimate time propagation equations. 
+An important example is an Inertial Navigation System (INS), where noisy measurements of gyros and accelerometers are used to propagate the system state estimate (i. e. position, velocity and attitude).
 Our example in this section can be though of as a simplified INS.
 
 # General treatment and consequences on estimation algorithms design
@@ -122,7 +122,7 @@ $$
 $$
 where $Q$ is power spectral density matrix of the noise $w$.
 
-We can see that there is no difference in estimation algorithm design besides whether noisy input is used in the estimate time propagation (<<navigation scenario>>) or not (<<control scenario>>).
+We can see that there is no difference in estimation algorithms design besides whether noisy input is used in the estimate time propagation (<<navigation scenario>>) or not (<<control scenario>>).
 Mixed scenarios are possible too -- with a conceptual understanding of the subject it's not difficult to properly design and reason about estimation algorithms in such cases too.
 
 # Conclusion
