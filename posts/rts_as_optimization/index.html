@@ -6,7 +6,7 @@ Problem formulation Link to heading We consider an estimation problem for a disc
 <label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>Posts</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://nmayorov.github.io/posts/rts_as_optimization/>Derivation of Kalman smoother from an optimization perspective</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
 <time datetime=2022-11-27T00:00:00Z>November 27, 2022</time></span>
 <span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
-14-minute read</span></div></div></header><div><p>In this post Kalman smoother formulas are derived as a solution to an optimization problem.</p><h1 id=problem-formulation>Problem formulation
+15-minute read</span></div></div></header><div><p>In this post Kalman smoother formulas are derived as a solution to an optimization problem.</p><h1 id=problem-formulation>Problem formulation
 <a class=heading-link href=#problem-formulation><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>We consider an estimation problem for a discrete time linear stochastic system:
 $$
@@ -230,7 +230,21 @@ The covariance of $\Delta w_k^s$ can be computed using the same approach as for 
 The derivation is omitted for the sake of brevity and the final formula looks like this:</p><p>$$
 Q_k^s \coloneqq \operatorname{E} \Delta w_k^s \left(\Delta w_k^s\right)^T = Q_k + B_k \left(P^s_{k + 1} - P^-_{k + 1} \right) B_k^T \\
 \text{with } B_k = Q_k G_k^T \left(P_{k+1}^-\right)^{-1}
-$$</p><h1 id=minor-generalization-of-the-model>Minor generalization of the model
+$$</p><h1 id=smoothness-of-xs>Smoothness of $x^s$
+<a class=heading-link href=#smoothness-of-xs><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>To assess smoothness properties of $x^s$ it is convenient to consider a continuous time problem.
+In this case $x^s$ satisfies the differential equation (as constraints in the optimization problem)
+$$
+\dot{x}^s = f(x_s, w_s)
+$$
+Thus $x^s$ is guaranteed to be at least continuous.</p><p>The question whether $w^s$ is continuous is more difficult.
+We note that $w^s$ is proportional to $\lambda^s$, which for discrete-time system satisfies the difference equation with $z_k$ involved.
+Considering that $z_k$ contains random uncorrelated noise we can conclude that $\lambda^s$ and $w^s$ are not continuous (with discrete time measurements).
+Of course it is not a rigorous proof, but the conclusion seems to be correct.
+There is also empirical evidence for that &ndash; $w_s$ estimates don&rsquo;t look at all as samples of a continuous function.</p><p>From the fact that $w^s$ is not continuos it follows that $\dot{x}^s = f(x_s, w_s)$ is not continuous as well.
+So for $x^s$ only continuity holds, its derivative is not continuous.</p><p>Discrete-time systems are usually built as discretization of continuous time systems.
+Thus $x_k^s$ can be though of as samples of continuous function $x^s(t)$.
+Probably there are proper notions of continuity for discrete-time variables, but I&rsquo;m not familiar with them.</p><h1 id=minor-generalization-of-the-model>Minor generalization of the model
 <a class=heading-link href=#minor-generalization-of-the-model><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>When applying the linear smoother just derived to solve subproblems arising in nonlinear estimation a minor generalization of the model is required:</p><ol><li>Consider a deterministic control signal $u_k$ in the time propagation equations</li><li>Consider that the process noise vectors have known nonzero mean values $w_k^-$</li></ol><p>The Kalman prediction equation for the state then becomes
 $$
