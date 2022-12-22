@@ -447,7 +447,7 @@ $$
 # Validity of error models
 
 The derivations were done using several first order approximations.
-These approximations are valid if higher order truncated terms are insignificant compared to the first order (linear) parts.
+These approximations are valid if higher order truncated terms are insignificant compared to the first order (linear) terms.
 
 For the attitude error vectors we've used linear approximations like $C^t_p \approx I + [\phi \times]$. 
 Thus it is obvious that the requirement for them are
@@ -455,24 +455,24 @@ $$
 \phi \ll 1 \\\\
 \psi \ll 1
 $$
-A working limit on the attitude errors for algorithms like EKF is approximately 0.1 radian or 5 degrees.
+A safe limit on the attitude errors for algorithms like EKF is approximately 0.1 radian or 5 degrees.
 
 We've also used an assumption that the vector $\theta$ is small. It means that 
 $$
 \Delta r \ll a
 $$
-Considering that Earth radius $a \approx 6400$ km, we can estimate the limit on acceptable position error as 500 km.
+Considering that Earth radius $a \approx 6400$ km, we can estimate the limit of an acceptable position error as 500 km.
 This value far exceeds useful range of INS accuracy.
 
 The situation with the velocity error is more interesting.
 In $\psi$-angle error model there is no truncation of higher order terms featuring $\partial V$.
-This is an interesting property which could also be derived or understood by considering kinematic equations in ECEF frame.
-However if we try to predict $\Delta V \approx \partial V + V^n \times \theta $ or $\delta V \approx \partial V - V^n  \times \psi$ errors (necessary for NED or body frame velocity processing in estimation algorithm), we will need to use the estimated velocity $\hat{V} = V^n + \Delta V$.
+This is an interesting property which could also be derived or understood by considering kinematic equations in ECEF frame, which are linear in $V^e$.
+However if we try to predict $\Delta V \approx \partial V + V^n \times \theta $ or $\delta V \approx \partial V - V^n  \times \psi$ errors (necessary for NED or body frame velocity processing in estimation algorithms), we will need to use the estimated velocity $\hat{V} = V^n + \Delta V$.
 And then for $\hat{V} \times \theta$ and $\hat{V} \times \psi$ to be valid to the first order it must hold
 $$
 \Delta V \ll V^n
 $$
-For $\phi$-angle and its modified version other (but conceptually similar) arguments might be made to come up with the same conclusion.
+For $\phi$-angle error model and its modified version other (but conceptually similar) arguments might be made to come up with the same conclusion.
 
 # Summary and discussion
 
@@ -566,7 +566,7 @@ However it might create consistency issues in estimation algorithms and some spe
 For example when $V^n = 0$ then the small velocity error condition $\Delta V \ll V^n$ doesn't hold.
 It means that we must assure that zero velocity is substituted in error propagation and measurements model coefficients in this case.
 The problematic term in the modified $\phi$-angle error model is $V^n \times \phi$ in the position error equation.
-We must assure that zero velocity is substituted in it to avoid creating false coupling between position and attitude error terms.
+We must assure that zero velocity is substituted in it to avoid creating false coupling between position and attitude error states.
 
 As for the model selection, the modified $\phi$-angle error model seems to be the most advantageous due to its useful conceptual and practical properties described above.
 
