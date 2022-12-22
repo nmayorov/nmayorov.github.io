@@ -6,7 +6,7 @@ INS state variables and equations for them Link to heading An Inertial Navigatio
 <label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>Posts</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://nmayorov.github.io/posts/ins_error_equations/>INS error equations</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
 <time datetime=2022-12-20T00:00:00Z>December 20, 2022</time></span>
 <span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
-20-minute read</span></div></div></header><div><p>In this note I want to derive Inertial Navigation System (INS) error equations in concise and coherent fashion.
+22-minute read</span></div></div></header><div><p>In this note I want to derive Inertial Navigation System (INS) error equations in concise and coherent fashion.
 This is of course a well known subject, however it&rsquo;s useful to derive all the equations from scratch and revisit the subject from time to time.</p><h1 id=ins-state-variables-and-equations-for-them>INS state variables and equations for them
 <a class=heading-link href=#ins-state-variables-and-equations-for-them><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>An Inertial Navigation System computes position, velocity and attitude of a moving object using gyro and accelerometer measurements from an Inertial Measurement Unit (IMU).</p><p>To formulate necessary equations, frames of reference (denoted by lowercase letters) need to be defined:</p><ul><li>$e$ &ndash; Earth-centered, Earth-fixed (ECEF) frame</li><li>$i$ &ndash; inertial frame with axes coinciding with frame $e$ at the initial time</li><li>$n$ &ndash; locally horizontal North-East-Down (NED) frame</li><li>$b$ &ndash; body frame with axes along inertial sensor axes</li></ul><p>A vector $u$ expressed in a frame $x$ is denoted as $u^x$.
@@ -88,7 +88,12 @@ $$
 $$</p><h2 id=attitude-error>Attitude error
 <a class=heading-link href=#attitude-error><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h2><p>As an attitude error either vector $\phi$ or $\psi$ can be used.
-When $\psi$ is used the full attitude error is computed as $\phi = \theta + \psi$ where $\theta$ is computed from the position error as explained next.</p><h1 id=helper-formulas>Helper formulas
+When $\psi$ is used the full attitude error is computed as $\phi = \theta + \psi$ where $\theta$ is computed from the position error as explained next.</p><h1 id=error-equations-in-general>Error equations in general
+<a class=heading-link href=#error-equations-in-general><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>Error equations are linear differential equations for position, velocity and attitude errors with time varying coefficients, which depend on position, velocity and attitude of INS.
+Gyro and accelerometers error also appear in right hand side of the equations.
+They are used in estimation algorithms for INS like linearized Kalman filter, Extended Kalman Filter, etc.</p><p>Linearity of the equations are achieved by a linearization process, meaning that the equations are approximate in nature and valid only as long as the errors are small.
+The exact meaning of the errors being small will be given in the end.</p><h1 id=helper-formulas>Helper formulas
 <a class=heading-link href=#helper-formulas><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>The curvature radii are computed as
 $$
@@ -317,7 +322,29 @@ $$
 Expressing $\Delta V$ via $\delta V$ we get
 $$
 \dot{\phi} = (R + [\omega_{ie}^n \times] T) \Delta r + T \delta V + (T [V^n \times] - [(\omega_{ie}^n + \omega_{en}^n) \times]) \phi -C^n_b \epsilon^b
-$$</p><h1 id=summary-and-discussion>Summary and discussion
+$$</p><h1 id=validity-of-error-models>Validity of error models
+<a class=heading-link href=#validity-of-error-models><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>The derivations were done using several first order approximations.
+These approximations are valid if higher order truncated terms are insignificant compared to the first order (linear) parts.</p><p>For the attitude error vectors we&rsquo;ve used linear approximations like $C^t_p \approx I + [\phi \times]$.
+Thus it is obvious that the requirement for them are
+$$
+\phi \ll 1 \\
+\psi \ll 1
+$$
+A working limit on the attitude errors for algorithms like EKF is approximately 0.1 radian or 5 degrees.</p><p>We&rsquo;ve also used an assumption that the vector $\theta$ is small. It means that
+$$
+\Delta r \ll a
+$$
+Considering that Earth radius $a \approx 6400$ km, we can estimate the limit on acceptable position error as 500 km.
+This value far exceeds useful range of INS accuracy.</p><p>The situation with the velocity error is more interesting.
+In $\psi$-angle error model there is no truncation of higher order terms featuring $\partial V$.
+This is an interesting property which could also be derived or understood by considering kinematic equations in ECEF frame.
+However if we try to predict $\Delta V \approx \partial V + V^n \times \theta $ or $\delta V \approx \partial V - V^n \times \psi$ errors (necessary for NED or body frame velocity processing in estimation algorithm), we will need to use the estimated velocity $\hat{V} = V^n + \Delta V$.
+And then for $\hat{V} \times \theta$ and $\hat{V} \times \psi$ to be valid to the first order it must hold
+$$
+\Delta V \ll V^n
+$$
+For $\phi$-angle and its modified version other (but conceptually similar) arguments might be made to come up with the same conclusion.</p><h1 id=summary-and-discussion>Summary and discussion
 <a class=heading-link href=#summary-and-discussion><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>Let&rsquo;s summarize all the models, discuss their possible simplifications, properties and relations to each other.</p><h2 id=phi-angle-error-model-1>$\phi$-angle error model
 <a class=heading-link href=#phi-angle-error-model-1><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
@@ -368,7 +395,10 @@ Using this perspective correction of velocity and attitude by the estimated erro
 <a class=heading-link href=#practical-considerations><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>The equations was written as if using true values of the variables to compute its coefficients.
 In practice estimated values (as only available) are used for that, it doesn&rsquo;t violate the validity of the equations to the first order in the errors.
-However it might create consistency and false observability issues in estimation algorithms and some special care must be taken in practical systems.</p><p>As for the model selection, the modified $\phi$-angle error model seems to be the most advantageous due to its useful conceptual and practical properties described above.</p><h1 id=conclusion>Conclusion
+However it might create consistency issues in estimation algorithms and some special care must be taken in practical systems.</p><p>For example when $V^n = 0$ then the small velocity error condition $\Delta V \ll V^n$ doesn&rsquo;t hold.
+It means that we must assure that zero velocity is substituted in error propagation and measurements model coefficients in this case.
+The problematic term in the modified $\phi$-angle error model is $V^n \times \phi$ in the position error equation.
+We must assure that zero velocity is substituted in it to avoid creating false coupling between position and attitude error terms.</p><p>As for the model selection, the modified $\phi$-angle error model seems to be the most advantageous due to its useful conceptual and practical properties described above.</p><h1 id=conclusion>Conclusion
 <a class=heading-link href=#conclusion><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>I&rsquo;ve presented a derivation of 3 different INS error models in a uniform and concise fashion, discussed their essential properties and differences between each other.
 Coefficients of the error equations were given as explicit matrices, which can be used directly for estimation algorithms implementations.</p></div><footer></footer></article><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
