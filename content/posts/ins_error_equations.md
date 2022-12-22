@@ -154,6 +154,15 @@ $$
 As an attitude error either vector $\phi$ or $\psi$ can be used.
 When $\psi$ is used the full attitude error is computed as $\phi = \theta + \psi$ where $\theta$ is computed from the position error as explained next. 
 
+# Error equations in general
+
+Error equations are linear differential equations for position, velocity and attitude errors with time varying coefficients, which depend on position, velocity and attitude of INS.
+Gyro and accelerometers error also appear in right hand side of the equations.
+They are used in estimation algorithms for INS like linearized Kalman filter, Extended Kalman Filter, etc.
+
+Linearity of the equations are achieved by a linearization process, meaning that the equations are approximate in nature and valid only as long as the errors are small.
+The exact meaning of the errors being small will be given in the end.
+
 # Helper formulas
 
 The curvature radii are computed as 
@@ -435,6 +444,36 @@ $$
 \dot{\phi} = (R + [\omega_{ie}^n \times] T) \Delta r + T \delta V + (T [V^n \times] - [(\omega_{ie}^n + \omega_{en}^n) \times]) \phi -C^n_b \epsilon^b
 $$
 
+# Validity of error models
+
+The derivations were done using several first order approximations.
+These approximations are valid if higher order truncated terms are insignificant compared to the first order (linear) parts.
+
+For the attitude error vectors we've used linear approximations like $C^t_p \approx I + [\phi \times]$. 
+Thus it is obvious that the requirement for them are
+$$
+\phi \ll 1 \\\\
+\psi \ll 1
+$$
+A working limit on the attitude errors for algorithms like EKF is approximately 0.1 radian or 5 degrees.
+
+We've also used an assumption that the vector $\theta$ is small. It means that 
+$$
+\Delta r \ll a
+$$
+Considering that Earth radius $a \approx 6400$ km, we can estimate the limit on acceptable position error as 500 km.
+This value far exceeds useful range of INS accuracy.
+
+The situation with the velocity error is more interesting.
+In $\psi$-angle error model there is no truncation of higher order terms featuring $\partial V$.
+This is an interesting property which could also be derived or understood by considering kinematic equations in ECEF frame.
+However if we try to predict $\Delta V \approx \partial V + V^n \times \theta $ or $\delta V \approx \partial V - V^n  \times \psi$ errors (necessary for NED or body frame velocity processing in estimation algorithm), we will need to use the estimated velocity $\hat{V} = V^n + \Delta V$.
+And then for $\hat{V} \times \theta$ and $\hat{V} \times \psi$ to be valid to the first order it must hold
+$$
+\Delta V \ll V^n
+$$
+For $\phi$-angle and its modified version other (but conceptually similar) arguments might be made to come up with the same conclusion.
+
 # Summary and discussion
 
 Let's summarize all the models, discuss their possible simplifications, properties and relations to each other.
@@ -522,7 +561,12 @@ Using this perspective correction of velocity and attitude by the estimated erro
 
 The equations was written as if using true values of the variables to compute its coefficients.
 In practice estimated values (as only available) are used for that, it doesn't violate the validity of the equations to the first order in the errors.
-However it might create consistency and false observability issues in estimation algorithms and some special care must be taken in practical systems.
+However it might create consistency issues in estimation algorithms and some special care must be taken in practical systems.
+
+For example when $V^n = 0$ then the small velocity error condition $\Delta V \ll V^n$ doesn't hold.
+It means that we must assure that zero velocity is substituted in error propagation and measurements model coefficients in this case.
+The problematic term in the modified $\phi$-angle error model is $V^n \times \phi$ in the position error equation.
+We must assure that zero velocity is substituted in it to avoid creating false coupling between position and attitude error terms.
 
 As for the model selection, the modified $\phi$-angle error model seems to be the most advantageous due to its useful conceptual and practical properties described above.
 
