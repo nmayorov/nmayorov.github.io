@@ -338,7 +338,7 @@ $$
 To assess smoothness properties of $x^s$ it is convenient to consider a continuous time problem.
 In this case $x^s$ satisfies the differential equation (as constraints in the optimization problem)
 $$
-\dot{x}^s = f(x_s, w_s)
+\dot{x}^s = f(x^s, w^s)
 $$
 Thus $x^s$ is guaranteed to be at least continuous.
 
@@ -346,14 +346,13 @@ The question whether $w^s$ is continuous is more difficult.
 We note that $w^s$ is proportional to $\lambda^s$, which for a discrete-time system satisfies the difference equation with $z_k$ involved.
 Considering that $z_k$ contains random uncorrelated noise we can conclude that $\lambda^s$ and $w^s$ are not continuous (with discrete time measurements).
 Of course it is not a rigorous proof, but the conclusion seems to be correct.
-There is also empirical evidence for that -- $w_s$ estimates don't look at all as samples of a continuous function.
+There is also empirical evidence for that -- $w^s$ estimates don't look at all as samples of a continuous function.
 
-From the fact that $w^s$ is not continuos it follows that $\dot{x}^s = f(x_s, w_s)$ is not continuous as well.
+From the fact that $w^s$ is not continuos it follows that $\dot{x}^s = f(x^s, w^s)$ is not continuous as well.
 So for $x^s$ only continuity holds, its derivative is not continuous.
 
 Discrete-time systems are usually built as discretization of continuous time systems.
-Thus $x_k^s$ can be though of as samples of continuous function $x^s(t)$.
-Probably there is a proper notion of continuity for discrete-time variables, but I'm not familiar with it.
+Thus $x_k^s$ can be though of as samples of a continuous function $x^s(t)$.
 
 # Minor generalization of the model
 
