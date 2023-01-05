@@ -89,12 +89,12 @@ $$</p><p>Note that our approach to consider the singular initial covariance came
 The rigorous derivation gave the only plausible result.
 Also note that at this point there is no notion of covariance matrices (besides $P_0$), let alone their positive definitiveness.</p><h1 id=some-matrix-identities-related-to-kalman-filtering>Some matrix identities related to Kalman filtering
 <a class=heading-link href=#some-matrix-identities-related-to-kalman-filtering><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
-<span class=sr-only>Link to heading</span></a></h1><p>As a starting point we take the standard Kalman correction formulas with the optimal gain matrix $K$:
+<span class=sr-only>Link to heading</span></a></h1><p>As a starting point we take the standard Kalman correction formula with the optimal gain matrix $K$:
 $$
 K = P^- H^T (H P^- H^T + R)^{-1} \\
 P^+ = (I - K H) P^-
 $$
-These formulas are applicable for any covariance matrix $P^-$ as long as $R$ is positive definite, which we already assume in our problem.</p><p>The last equation can be written as
+The formula is applicable for any covariance matrix $P^-$ as long as $R$ is positive definite, which we already assume in our problem.</p><p>The last equation can be written as
 $$
 P^- - P^+ = K H P^- = P^- H^T K^T
 $$</p><p>Let&rsquo;s combine it with the gain equation as follows:
@@ -112,11 +112,11 @@ $$</p><p>Now let&rsquo;s prove the identity:
 $$
 (I + H^T R^{-1} H P^-)^{-1} = I - H^T R^{-1} H P^+ = I - H^T K^T
 $$
-To do that we show that the multiplication gives the identity matrix:
+To do that we show that the multiplications on both sides give the identity matrix:
 $$
 \begin{split}
 (I + H^T R^{-1} H P^-) (I - H^T R^{-1} H P^+) = I + H^T R^{-1} H (P^- - P^+ - P^- H^T R^{-1} H P^+) = I \\
-(I - H^T R^{-1} H P^+) (I + H^T R^{-1} H P^-) = I - H^T R^{-1} H (P^- - P^+ - P^+ H^T R^{-1} H P^-) = I
+(I - H^T R^{-1} H P^+) (I + H^T R^{-1} H P^-) = I + H^T R^{-1} H (P^- - P^+ - P^+ H^T R^{-1} H P^-) = I
 \end{split}
 $$</p><p>By taking its transpose we get
 $$
@@ -124,7 +124,7 @@ $$
 $$</p><p>Similarly another formula can be proven
 $$
 (R + H P^- H^T)^{-1} = R^{-1} - R^{-1} H P^+ H^T R^{-1}
-$$</p><h1 id=equivalent-problem>Equivalent problem
+$$</p><p>Equipped with the derived identities we can carry on with solving the boundary-value problem.</p><h1 id=equivalent-problem>Equivalent problem
 <a class=heading-link href=#equivalent-problem><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>First we prove the equivalence of the problems:
 $$
@@ -188,7 +188,7 @@ $$
 x_k = x_k^- + P_k^- \lambda_k \\
 x_k = x_k^+ + P_k^+ F_k^T \lambda_{k+1}
 $$
-If all $P_k^-$ are invertible the recursion equation for $\lambda$ follows from them:
+If all $P_k^-$ are invertible the difference equation for $\lambda$ follows from them:
 $$
 x_k^- + P_k^- \lambda_k = x_k^+ + P_k^+ F_k^T \lambda_{k+1} \\
 \lambda_k = (P_k^-)^{-1} P_k^+ F_k^T \lambda_{k+1} + (P_k^-)^{-1} (x_k^+ - x_k^-) \\
