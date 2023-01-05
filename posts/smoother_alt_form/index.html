@@ -1,0 +1,274 @@
+<!doctype html><html lang=en><head><title>Alternative form of Kalman smoother · My Blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=description content="In this post (recommended to read beforehand) I&rsquo;ve shown a derivation of the Kalman smoother as a solution to an optimization problem. The resulting formulas are surprisingly elegant, however their applicability depends on the assumption that apriori filter covariance matrices $P_k^-$ are positive definite and invertible. This assumption might be limiting in practical problems and thus another form of the Kalman smoother is derived here.
+Motivating example Link to heading A singular covariance matrix may arise in the following practical scenario."><meta name=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="Alternative form of Kalman smoother"><meta name=twitter:description content="In this post (recommended to read beforehand) I&rsquo;ve shown a derivation of the Kalman smoother as a solution to an optimization problem. The resulting formulas are surprisingly elegant, however their applicability depends on the assumption that apriori filter covariance matrices $P_k^-$ are positive definite and invertible. This assumption might be limiting in practical problems and thus another form of the Kalman smoother is derived here.
+Motivating example Link to heading A singular covariance matrix may arise in the following practical scenario."><meta property="og:title" content="Alternative form of Kalman smoother"><meta property="og:description" content="In this post (recommended to read beforehand) I&rsquo;ve shown a derivation of the Kalman smoother as a solution to an optimization problem. The resulting formulas are surprisingly elegant, however their applicability depends on the assumption that apriori filter covariance matrices $P_k^-$ are positive definite and invertible. This assumption might be limiting in practical problems and thus another form of the Kalman smoother is derived here.
+Motivating example Link to heading A singular covariance matrix may arise in the following practical scenario."><meta property="og:type" content="article"><meta property="og:url" content="https://nmayorov.github.io/posts/smoother_alt_form/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-01-05T00:00:00+00:00"><meta property="article:modified_time" content="2023-01-05T00:00:00+00:00"><link rel=canonical href=https://nmayorov.github.io/posts/smoother_alt_form/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.c4d7e93a158eda5a65b3df343745d2092a0a1e2170feeec909b8a89443903c6a.css integrity="sha256-xNfpOhWO2lpls980N0XSCSoKHiFw/u7JCbiolEOQPGo=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5><meta name=generator content="Hugo 0.109.0"></head><body class="preload-transitions colorscheme-light"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>My Blog</a>
+<input type=checkbox id=menu-toggle>
+<label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>Posts</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://nmayorov.github.io/posts/smoother_alt_form/>Alternative form of Kalman smoother</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2023-01-05T00:00:00Z>January 5, 2023</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+12-minute read</span></div></div></header><div><p>In <a href=https://nmayorov.github.io/posts/rts_as_optimization/>this post</a> (recommended to read beforehand) I&rsquo;ve shown a derivation of the Kalman smoother as a solution to an optimization problem.
+The resulting formulas are surprisingly elegant, however their applicability depends on the assumption that apriori filter covariance matrices $P_k^-$ are positive definite and invertible.
+This assumption might be limiting in practical problems and thus another form of the Kalman smoother is derived here.</p><h1 id=motivating-example>Motivating example
+<a class=heading-link href=#motivating-example><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>A singular covariance matrix may arise in the following practical scenario.
+Imagine that we want to process measurements which relate states at the current and previous epochs &ndash; $x_k$ and $x_{k-1}$.
+A possible example might be processing of distance increments from an odometeter in a navigation algorithm.
+Such measurements are not directly supported by Kalman filter or smoother algorithms.
+However we can cast them into the Kalman framework by considering an augmented vector
+$$
+x^a_{k + 1} = \begin{bmatrix}
+x_{k + 1} \\
+x_k
+\end{bmatrix}
+$$
+The approach is also known as &#171;stochastic cloning&#187;.</p><p>Now consider a time transition from $x_k$ to $x^a_{k + 1}$:
+$$
+x^a_{k + 1} = F^a_k x_k + G^a_k w_k \\
+\text{with } F^a_k = \begin{bmatrix}
+F_k \\\
+I
+\end{bmatrix}, G_k^a = \begin{bmatrix}
+G_k \\
+0
+\end{bmatrix}
+$$
+For the covariance we then get
+$$
+P^a_{k + 1} = F_k^a P_k (F_k^a)^T + G^a_k Q_k (G^a_k)^T = \begin{bmatrix}
+F_k P_k F_k^T + G_k Q_k G_k^T & F_k P_k \\
+P_k F_k^T & P_k
+\end{bmatrix}
+$$
+If $G_k Q_k G_k^T$ is singular, then the covariance $P^a_{k + 1}$ will be singular too.
+For example if there is no noise we get
+$$
+P^a_{k + 1} = \begin{bmatrix}
+F_k P_k F_k^T & F_k P_k \\
+P_k F_k^T & P_k
+\end{bmatrix}
+$$
+Multiplying the second block row by $F_k$ we get identical block rows, which shows that $P^a_{k + 1}$ is singular.</p><p>Also even if we don&rsquo;t use stochastic cloning, the covariance matrix may gradually approach singularity from the perspective of floating point numbers as measurements are processed.
+In this case we want to avoid computing its inverse, which is another solid motivation to develop an alternative form where inverses are not needed.</p><h1 id=problem-formulation-and-the-boundary-value-problem>Problem formulation and the boundary value problem
+<a class=heading-link href=#problem-formulation-and-the-boundary-value-problem><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>Let&rsquo;s recap the optimization problem.</p><p>We want to make a small generalization that the initial apriori covariance $P_0^-$ might be singular.
+In this case we can&rsquo;t add a term $1/2 (x_0 - x_0^-)^T (P_0^-)^{-1} (x_0 - x_0^-)$ to the cost function.
+But any covariance matrix can be represented as
+$$
+P_0 = G_{-1} Q_{-1} G_{-1}^T
+$$
+where $Q_{-1}$ is positive definite (subscripts -1 is purely a notational choice).
+Keeping in mind such factorization we express the initial state $x_0$ as
+$$
+x_0 = x_0^- + G_{-1} w_{-1}
+$$
+where noise $w_{-1}$ is assumed to have covariance $Q_{-1}$.</p><p>The state estimates are searched by considering the cost function:
+$$
+\begin{split}
+J(x, w) =& \frac{1}{2} w_{-1}^T Q_{-1}^{-1} w_{-1} \\
++& \frac{1}{2} \sum_{k = 0}^{N - 1} (H_k x_k - z_k)^T R_k^{-1} (H_k x_k - z_k) \\
++& \frac{1}{2} \sum_{k = 0}^{N - 1} w_k^T Q_k^{-1} w_k
+\end{split}
+$$
+Which is minimized subject to the state transition equations:
+$$
+\min_{x, w} J(x, w) \text{ subject to } \\
+x_0 = x_0^- + G_{-1} w_{-1} \\
+x_{k + 1} = F_k x_k + G_k w_k
+$$</p><p>The problem is solved by finding the stationary point of the Lagrange function.
+It gives the following discrete-time boundary value problem:
+$$
+x_{k + 1} = F_k x_k + G_k Q_k G_k^T \lambda_{k+1} \\
+\lambda_k = F_k^T \lambda_{k + 1} + H_k^T R_k^{-1} \left(z_k - H_k x_k\right) \\
+P_0^- \lambda_0 = x_0 - x_0^- \\
+\lambda_N = 0
+$$
+Where $\lambda_k$ are introduced Lagrange multipliers. From them the noise vectors are computed as
+$$
+w_k = Q_k G_k^T \lambda_{k+1} \\
+$$</p><p>Note that our approach to consider the singular initial covariance came down to writing the boundary condition $\lambda_0 = \left(P_0^-\right)^{-1} \left(x_0 - x_0^-\right)$ as $P_0^- \lambda_0 = x_0 - x_0^-$.
+The rigorous derivation gave the only plausible result.
+Also note that at this point there is no notion of covariance matrices (besides $P_0$), let alone their positive definitiveness.</p><h1 id=some-matrix-identities-related-to-kalman-filtering>Some matrix identities related to Kalman filtering
+<a class=heading-link href=#some-matrix-identities-related-to-kalman-filtering><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>As a starting point we take the standard Kalman correction formulas with the optimal gain matrix $K$:
+$$
+K = P^- H^T (H P^- H^T + R)^{-1} \\
+P^+ = (I - K H) P^-
+$$
+These formulas are applicable for any covariance matrix $P^-$ as long as $R$ is positive definite, which we already assume in our problem.</p><p>The last equation can be written as
+$$
+P^- - P^+ = K H P^- = P^- H^T K^T
+$$</p><p>Let&rsquo;s combine it with the gain equation as follows:
+$$
+K (H P^- H^T + R) = P^- H^T \\
+K H P^- H^T = P^- H^T - P^+ H^T
+$$
+Subtracting the equations we get the following alternative expression for $K$:
+$$
+K = P^+ H^T R^{-1}
+$$</p><p>Using this alternative expression we can also write
+$$
+P^- - P^+ = P^+ H^T R^{-1} H P^- = P^- H^T R^{-1} H P^+
+$$</p><p>Now let&rsquo;s prove the identity:
+$$
+(I + H^T R^{-1} H P^-)^{-1} = I - H^T R^{-1} H P^+ = I - H^T K^T
+$$
+To do that we show that the multiplication gives the identity matrix:
+$$
+\begin{split}
+(I + H^T R^{-1} H P^-) (I - H^T R^{-1} H P^+) = I + H^T R^{-1} H (P^- - P^+ - P^- H^T R^{-1} H P^+) = I \\
+(I - H^T R^{-1} H P^+) (I + H^T R^{-1} H P^-) = I - H^T R^{-1} H (P^- - P^+ - P^+ H^T R^{-1} H P^-) = I
+\end{split}
+$$</p><p>By taking its transpose we get
+$$
+(I + P^- H^T R^{-1} H)^{-1} = I - P^+ H^T R^{-1} H = I - K H
+$$</p><p>Similarly another formula can be proven
+$$
+(R + H P^- H^T)^{-1} = R^{-1} - R^{-1} H P^+ H^T R^{-1}
+$$</p><h1 id=equivalent-problem>Equivalent problem
+<a class=heading-link href=#equivalent-problem><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>First we prove the equivalence of the problems:
+$$
+x_{k + 1} = F_k x_k + G_k Q_k G_k^T \lambda_{k+1} \\
+\lambda_k = F_k^T \lambda_{k + 1} + H_k^T R_k^{-1} \left(z_k - H_k x_k\right) \\
+P_0^- \lambda_0 = x_0 - x_0^- \\
+\lambda_N = 0 \\
+\downdownarrows \upuparrows \\
+x_k = x_k^- + P_k^- \lambda_k \\
+\lambda_k = F_k^T \lambda_{k + 1} + H_k^T R_k^{-1} \left(z_k - H_k x_k\right) \\
+\lambda_N = 0
+$$
+Meaning that any solution to the first problem is the solution to the second problem and vice versa.
+Or that the set of solutions are identical.</p><p>For convenience let&rsquo;s call $x_k = x_k^- + P_k^- \lambda_k$ the &#171;magic equation&#187;.</p><h2 id=proof-from-up-to-down>Proof from up to down
+<a class=heading-link href=#proof-from-up-to-down><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>We need to prove that the magic equation follows from the difference equations.</p><p>We do it by induction.
+For $k = 0$ it&rsquo;s true as the boundary condition.
+Now assume that it&rsquo;s true for some $k$ and substitute the expression for $\lambda_k$ into it:
+$$
+x_k = x_k^- + P_k^- F_k^T \lambda_{k + 1} + P_k^- H_k^T R_k^{-1} z_k - P_k^- H_k^T R_k^{-1} H_k x_k \\
+(I + P_k^- H_k^T R_k^{-1} H_k) x_k = x_k^- + P_k^- F_k^T \lambda_{k + 1} + P_k^- H_k^T R_k^{-1} z_k \\
+$$
+Now using the inverse formula for the matrix multiplier on the left we get
+$$
+x_k = (I - K_k H_k) x_k^- + P_k^+ F_k^T \lambda_{k + 1} + P_k^+ H_k^T R_k^{-1} z_k
+$$
+Here we spot the expression for $K_k$ before $z_k$ and rewrite the equation as
+$$
+x_k = x_k^- + K_k (z_k - H_k x_k^-) + P^+_k F_k^T \lambda_{k+1} = x_k^+ + P_k^+ F_k^T \lambda_{k+1}
+$$
+And finally substitute this expression into recursion for $x$:
+$$
+x_{k + 1} = F_k x_k^+ + (F_k^T P_k^+ F_k + G_k Q_k G_k^T) \lambda_{k + 1} \\
+x_{k + 1} = x_{k + 1}^- + P_{k + 1}^- \lambda_{k + 1}
+$$
+Which proves the step of the induction and with that the equation for all $k$.</p><h2 id=proof-from-down-to-up>Proof from down to up
+<a class=heading-link href=#proof-from-down-to-up><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>We need to prove that the difference equation for $x$ follows from the magic equation and the difference equation for $\lambda$.</p><p>Substitute the expression for $\lambda_k$ into the magic equation to get (derived above already)
+$$
+x_k = x_k^+ + P_k^+ F_k^T \lambda_{k+1} \\
+x_k^+ = x_k - P_k^+ F_k^T \lambda_{k+1}
+$$
+Now substitute $x_k^+$ into the magic equation for $k + 1$:
+$$
+\begin{split}
+x_{k + 1} = x_{k + 1}^- + P_{k + 1}^- \lambda_{k + 1} = F_k x_k^+ + P^-_{k + 1} \lambda_{k + 1}
+= F_k x_k + (P_{k + 1}^- - F_k P_k^+ F_k^T) \lambda_{k + 1} = \\ = F_k x_k + G_k Q_k G_k^T \lambda_{k + 1}
+\end{split}
+$$</p><h1 id=solution-to-the-problem>Solution to the problem
+<a class=heading-link href=#solution-to-the-problem><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>With the proof from the previous section we can solve the more simple equivalent problem
+$$
+x_k = x_k^- + P_k^- \lambda_k \\
+\lambda_k = F_k^T \lambda_{k + 1} + H_k^T R_k^{-1} \left(z_k - H_k x_k\right) \\
+\lambda_N = 0
+$$
+and be sure to get the solution of the original problem.</p><h2 id=rts-form>RTS form
+<a class=heading-link href=#rts-form><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>To derive the RTS form we consider the already derived corollary equation along with the magic equation:
+$$
+x_k = x_k^- + P_k^- \lambda_k \\
+x_k = x_k^+ + P_k^+ F_k^T \lambda_{k+1}
+$$
+If all $P_k^-$ are invertible the recursion equation for $\lambda$ follows from them:
+$$
+x_k^- + P_k^- \lambda_k = x_k^+ + P_k^+ F_k^T \lambda_{k+1} \\
+\lambda_k = (P_k^-)^{-1} P_k^+ F_k^T \lambda_{k+1} + (P_k^-)^{-1} (x_k^+ - x_k^-) \\
+\lambda_k = F_k^T \lambda_{k + 1} + H_k^T R_k^{-1} \left(z_k - H_k x_k\right)
+$$
+It means the two equations are equivalent to the original problem.</p><p>Rewriting them slightly different
+$$
+x_{k + 1} = x_{k + 1}^- + P_k^- \lambda_{k + 1} \\
+x_k = x_k^+ + P_k^+ F_k^T \lambda_{k+1}
+$$
+we can eliminate $\lambda_{k + 1}$ and come up with the unique solution:
+$$
+x_N^s = x_N^- \\
+x_k^s = x_k^+ + P_k^+ F_k^T \left(P_{k + 1}^-\right)^{-1} \left(x_{k + 1}^s - x_{k + 1}^-\right)
+$$
+and
+$$
+\lambda_k^s = (P_k^-)^{-1} (x_k^s - x_k^-) \\
+w_k^s = Q_k G_k^T \lambda_{k+1}^s
+$$</p><h2 id=form-with-explicit-recursion-for-lambda>Form with explicit recursion for $\lambda$
+<a class=heading-link href=#form-with-explicit-recursion-for-lambda><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>If $P_k^-$ is singular then the two equations from the RTS derivation are not equivalent to the original problem.
+Meaning that there is no unique solution to them and an arbitrary solution is not guaranteed to be the solution of the original problem.</p><p>We go back to the original equation for $\lambda_k$ and substitute $x_k = x_k^- + P_k^- \lambda_k$ into it:
+$$
+\lambda_k = F_k^T \lambda_{k+1} + H_k^T R_k^{-1} (z_ k - H_k x_k^- - H_k P_k^- \lambda_k) \\
+(I + H_k^T R_k^{-1} H_k P_k^-) \lambda_k = F_k^T \lambda_{k+1} + H_k^T R_k^{-1} (z_k - H_k x_k^-)
+$$
+Taking the inverse of the matrix multiplier on the left we get
+$$
+\lambda_k = (I - K_k^T H_k^T) F_k^T \lambda_{k + 1} + (I - H_k^T R_k^{-1} H_k P^-_k) H_k^T R_k^{-1} (z_k - H_k x_k^-) \\
+\lambda_k = (I - K_k^T H_k^T) F_k^T \lambda_{k + 1} + H_k^T (H_k P^-_k H_k^T + R_k)^{-1} (z_k - H_k x_k^-) \\
+$$
+Introduce some notation:</p><ul><li>$\Psi_k = F_k (I - K_k H_k)$ &ndash; can be though of as a total matrix for the state propagation, combing filter correction and prediction steps</li><li>$S_k = H_k P^-_k H_k^T + R_k$ &ndash; covariance matrix of the innovation vector $z_k - H_k x_k^-$</li></ul><p>Using it the recursion can be written as
+$$
+\lambda_N^s = 0 \\
+\lambda_k^s = \Psi_k^T \lambda^s_{k + 1} + H_k^T S_k^{-1} (z_k - H_k x_k^-)
+$$</p><p>From $\lambda^s_k$ we can compute optimal state and noise estimates as
+$$
+x_k^s = x_k^- + P_k^- \lambda^s_k = x_k^+ + P_k^+ F_k^T \lambda_{k + 1}^s \\
+w_k^s = Q_k G_k^T \lambda^s_{k + 1}
+$$</p><h2 id=uniqueness-of-the-solution>Uniqueness of the solution
+<a class=heading-link href=#uniqueness-of-the-solution><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>We see that the solution is unique, because $\lambda_k^s$ obeys a deterministic recursion process starting from $\lambda_N^s = 0$.
+And $x_k^s$ and $w_k^s$ are uniquely determined from $\lambda_k^s$.
+This fact doesn&rsquo;t depend on whether $P_k^-$ is singular or not.</p><p>One thing that may seem a bit confusing is that when $P_k^-$ is singular the equation $x_k = x_k^- + P_k^- \lambda_k$ is satisfied for an infinite set of $\lambda_k$.
+However $\lambda_k$ determine the noise vectors $w_k$ which purpose is to make state transition equations consistent.
+Thus arbitrary adjustment of individual $\lambda_k$ is not possible, they are determined by the recursion equation uniquely.</p><h1 id=covariance-computation>Covariance computation
+<a class=heading-link href=#covariance-computation><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>To compute covariance of the estimate errors we recursively update covariance of $\lambda_k^s$ as:
+$$
+\Lambda^s_k = \Psi^T_k \Lambda^s_{k + 1} \Psi_k + H_k^T S_k^{-1} H_k \\
+\Lambda^s_N = 0
+$$
+Then using the same reasoning as for the RTS form we get the following expressions for error covariances:
+$$
+P_k^s = P_k^- - P_k^- \Lambda^s_k P_k^- = P_k^+ - P_k^+ F_k^T \Lambda^s_{k + 1} F_k P_k^+ \\
+Q_k^s = Q_k - Q_k G_k^T \Lambda^s_{k + 1} G_k Q_k
+$$</p><h1 id=algorithmic-aspects-multiple-or-missing-measurements>Algorithmic aspects: multiple or missing measurements
+<a class=heading-link href=#algorithmic-aspects-multiple-or-missing-measurements><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>In practical algorithms its better to assume that at each epoch there is an arbitrary number of independent measurements (possibly zero).
+In this regard its better to split $\lambda_k^s$ and $\Lambda_k^s$ computation into (backward) &#171;prediction&#187; and &#171;correction&#187; steps similar to Kalman filter.</p><p>The prediction step:
+$$
+\lambda_{k}^- = F_k^T \lambda_{k + 1}^+ \\
+\Lambda_{k}^- = F_k^T \Lambda_{k + 1}^+ F_k
+$$
+The correction step:
+$$
+\lambda_{k}^+ = (I - K_k H_k)^T \lambda_{k}^- + H_k^T S_k^{-1} (z_k - H_k x_k^-) \\
+\Lambda_{k}^+ = (I - K_k H_k)^T \Lambda_{k}^- (I - K_k H_k) + H_k^T S_k^{-1} H_k
+$$
+The correction step is repeated for each measurement, applying the formulas to the current estimate.
+And after all the measurements are processed the result is the &#171;smoothed&#187; estimate $\lambda_k^s$ which is used to compute $x_k^s$ and $w_k^s$.</p><p>The detailed notation is omitted to avoid symbolic clutter.
+The logic here is exactly the same as in Kalman filtering when multiple independent measurements are sequentially processed.
+The final result doesn&rsquo;t depend on the order in which the measurements are processed.
+This is something nontrivial to prove formally from the formulas only (similar to Kalman filtering).</p><h1 id=conclusion>Conclusion
+<a class=heading-link href=#conclusion><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>An alternative form of the Kalman smoother which doesn&rsquo;t assume or require positive definite covariance matrices was derived.
+This form is somewhat more involved to implement.
+However for practical algorithms the main requirements are robustness and universality and this alternative algorithm seems to fullfil them better.</p></div><footer></footer></article><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}]})'></script></section></div><footer class=footer><section class=container>©
+2023
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.</section></footer></main><script src=/js/coder.min.236049395dc3682fb2719640872958e12f1f24067bb09c327b233e6290c7edac.js integrity="sha256-I2BJOV3DaC+ycZZAhylY4S8fJAZ7sJwyeyM+YpDH7aw="></script></body></html>
