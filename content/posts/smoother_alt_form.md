@@ -105,12 +105,12 @@ Also note that at this point there is no notion of covariance matrices (besides 
 
 # Some matrix identities related to Kalman filtering
 
-As a starting point we take the standard Kalman correction formulas with the optimal gain matrix $K$:
+As a starting point we take the standard Kalman correction formula with the optimal gain matrix $K$:
 $$
 K = P^- H^T (H P^- H^T + R)^{-1} \\\\
 P^+ = (I - K H) P^-
 $$
-These formulas are applicable for any covariance matrix $P^-$ as long as $R$ is positive definite, which we already assume in our problem.
+The formula is applicable for any covariance matrix $P^-$ as long as $R$ is positive definite, which we already assume in our problem.
 
 The last equation can be written as
 $$
@@ -136,11 +136,11 @@ Now let's prove the identity:
 $$
 (I + H^T R^{-1} H P^-)^{-1} = I - H^T R^{-1} H P^+ = I - H^T K^T
 $$
-To do that we show that the multiplication gives the identity matrix:
+To do that we show that the multiplications on both sides give the identity matrix:
 $$
 \begin{split}
 (I + H^T R^{-1} H P^-) (I - H^T R^{-1} H P^+) = I + H^T R^{-1} H (P^- - P^+ - P^- H^T R^{-1} H P^+) = I \\\\
-(I - H^T R^{-1} H P^+) (I + H^T R^{-1} H P^-) = I - H^T R^{-1} H (P^- - P^+ - P^+ H^T R^{-1} H P^-) = I
+(I - H^T R^{-1} H P^+) (I + H^T R^{-1} H P^-) = I + H^T R^{-1} H (P^- - P^+ - P^+ H^T R^{-1} H P^-) = I
 \end{split}
 $$
 
@@ -153,6 +153,8 @@ Similarly another formula can be proven
 $$
 (R + H P^- H^T)^{-1} = R^{-1} - R^{-1} H P^+ H^T R^{-1}
 $$
+
+Equipped with the derived identities we can carry on with solving the boundary-value problem.
 
 # Equivalent problem
 
@@ -232,7 +234,7 @@ $$
 x_k = x_k^- + P\_k^- \lambda_k \\\\
 x_k = x_k^+ + P_k^+ F_k^T \lambda\_{k+1}
 $$
-If all $P_k^-$ are invertible the recursion equation for $\lambda$ follows from them:
+If all $P_k^-$ are invertible the difference equation for $\lambda$ follows from them:
 $$
 x_k^- + P_k^- \lambda_k = x_k^+ + P_k^+ F_k^T \lambda\_{k+1} \\\\
 \lambda_k = (P_k^-)^{-1} P_k^+ F_k^T \lambda\_{k+1} + (P_k^-)^{-1} (x_k^+ - x_k^-) \\\\
