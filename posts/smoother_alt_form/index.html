@@ -218,7 +218,7 @@ $$
 $$
 Taking the inverse of the matrix multiplier on the left we get
 $$
-\lambda_k = (I - K_k^T H_k^T) F_k^T \lambda_{k + 1} + (I - H_k^T R_k^{-1} H_k P^-_k) H_k^T R_k^{-1} (z_k - H_k x_k^-) \\
+\lambda_k = (I - K_k^T H_k^T) F_k^T \lambda_{k + 1} + (I - H_k^T R_k^{-1} H_k P^+_k) H_k^T R_k^{-1} (z_k - H_k x_k^-) \\
 \lambda_k = (I - K_k^T H_k^T) F_k^T \lambda_{k + 1} + H_k^T (H_k P^-_k H_k^T + R_k)^{-1} (z_k - H_k x_k^-) \\
 $$
 Introduce some notation:</p><ul><li>$\Psi_k = F_k (I - K_k H_k)$ &ndash; can be though of as a total matrix for the state propagation, combing filter correction and prediction steps</li><li>$S_k = H_k P^-_k H_k^T + R_k$ &ndash; covariance matrix of the innovation vector $z_k - H_k x_k^-$</li></ul><p>Using it the recursion can be written as
