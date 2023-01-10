@@ -270,7 +270,7 @@ $$
 $$
 Taking the inverse of the matrix multiplier on the left we get
 $$
-\lambda_k = (I - K_k^T H_k^T) F_k^T \lambda_{k + 1} + (I - H_k^T R_k^{-1} H_k P^-_k) H_k^T R_k^{-1} (z_k - H_k x_k^-) \\\\
+\lambda_k = (I - K_k^T H_k^T) F_k^T \lambda_{k + 1} + (I - H_k^T R_k^{-1} H_k P^+_k) H_k^T R_k^{-1} (z_k - H_k x_k^-) \\\\
 \lambda_k = (I - K_k^T H_k^T) F_k^T \lambda\_{k + 1} + H_k^T (H_k P^-_k H_k^T + R_k)^{-1} (z_k - H_k x_k^-) \\\\
 $$
 Introduce some notation:
