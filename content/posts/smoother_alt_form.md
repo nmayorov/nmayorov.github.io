@@ -327,13 +327,12 @@ $$
 \lambda_{k}^+ = (I - K_k H_k)^T \lambda_{k}^- + H_k^T S_k^{-1} (z_k - H_k x_k^-) \\\\
 \Lambda_{k}^+ = (I - K_k H_k)^T \Lambda_{k}^- (I - K_k H_k) + H_k^T S_k^{-1} H_k
 $$
-The correction step is repeated for each measurement, applying the formulas to the current estimate. 
-And after all the measurements are processed the result is the <<smoothed>> estimate $\lambda_k^s$ which is used to compute $x_k^s$ and $w_k^s$.
+It is repeated for each measurement, applying the formulas to the current estimate. 
+The gain vectors, innovations and their covariances are saved from the filter pass.
+The crucial point is that the formulas are applied in the *reverse* to the order in which the measurements were processed in the filter.
+In the end the result is the <<smoothed>> estimate $\lambda_k^s$ which is used to compute $x_k^s$ and $w_k^s$.
 
-The detailed notation is omitted to avoid symbolic clutter. 
-The logic here is exactly the same as in Kalman filtering when multiple independent measurements are sequentially processed.
-The final result doesn't depend on the order in which the measurements are processed.
-This is something nontrivial to prove formally from the formulas only (similar to Kalman filtering).
+The correctness of such approach can be understood by considering intermediate states between the measurements.
 
 # Conclusion
 
