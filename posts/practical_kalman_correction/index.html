@@ -1,0 +1,99 @@
+<!doctype html><html lang=en><head><title>Implementation of Kalman correction formulas · My Blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=description content="This is a short note on my view how to best implement Kalman correction formulas in a programing language.
+Basic formulas Link to heading A vector measurement is linearly related to a state vector with an additive noise: $$ z = H x + v $$ Where $z$ and $H$ are a known vector and matrix and the noise vector $v$ has a known covariance matrix $R$. Thus the measurement model is defined by 3 elements &ndash; $z, H, R$."><meta name=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="Implementation of Kalman correction formulas"><meta name=twitter:description content="This is a short note on my view how to best implement Kalman correction formulas in a programing language.
+Basic formulas Link to heading A vector measurement is linearly related to a state vector with an additive noise: $$ z = H x + v $$ Where $z$ and $H$ are a known vector and matrix and the noise vector $v$ has a known covariance matrix $R$. Thus the measurement model is defined by 3 elements &ndash; $z, H, R$."><meta property="og:title" content="Implementation of Kalman correction formulas"><meta property="og:description" content="This is a short note on my view how to best implement Kalman correction formulas in a programing language.
+Basic formulas Link to heading A vector measurement is linearly related to a state vector with an additive noise: $$ z = H x + v $$ Where $z$ and $H$ are a known vector and matrix and the noise vector $v$ has a known covariance matrix $R$. Thus the measurement model is defined by 3 elements &ndash; $z, H, R$."><meta property="og:type" content="article"><meta property="og:url" content="https://nmayorov.github.io/posts/practical_kalman_correction/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-01-12T00:00:00+00:00"><meta property="article:modified_time" content="2023-01-12T00:00:00+00:00"><link rel=canonical href=https://nmayorov.github.io/posts/practical_kalman_correction/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.c4d7e93a158eda5a65b3df343745d2092a0a1e2170feeec909b8a89443903c6a.css integrity="sha256-xNfpOhWO2lpls980N0XSCSoKHiFw/u7JCbiolEOQPGo=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5><meta name=generator content="Hugo 0.109.0"></head><body class="preload-transitions colorscheme-light"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>My Blog</a>
+<input type=checkbox id=menu-toggle>
+<label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>Posts</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://nmayorov.github.io/posts/practical_kalman_correction/>Implementation of Kalman correction formulas</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2023-01-12T00:00:00Z>January 12, 2023</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+5-minute read</span></div></div></header><div><p>This is a short note on my view how to best implement Kalman correction formulas in a programing language.</p><h1 id=basic-formulas>Basic formulas
+<a class=heading-link href=#basic-formulas><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>A vector measurement is linearly related to a state vector with an additive noise:
+$$
+z = H x + v
+$$
+Where $z$ and $H$ are a known vector and matrix and the noise vector $v$ has a known covariance matrix $R$.
+Thus the measurement model is defined by 3 elements &ndash; $z, H, R$.</p><p>The measurement is processed to improve the state estimate and reduce its error variance according to formulas:
+$$
+x^+ = x^- + K (z - H x^-) \\
+P^+ = (I - KH) P^- \\
+\text{with } K = P^- H^T S^{-1} \text{ and } S = H P^- H^T + R
+$$
+Where $x^-, P^-$ and $x^+, P^+$ are state estimates and error covariance matrices before (aprior) and after (aposteriori) the measurement was processed respectively.
+The gain vector $K$ optimally combines the apriori estimate and the measurement to achieve the smallest error variance of the $x^+$.</p><p>The formulas are valid as long as the innovation covariance matrix $S$ is positive definite, which makes them almost universally applicable in practical problems.</p><h2 id=scalar-measurement>Scalar measurement
+<a class=heading-link href=#scalar-measurement><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>If $z$ contains only a single element we can consider it to be a scalar and write the measurement equation as
+$$
+z = h^T x + v
+$$
+Let $r$ be the variance of the scalar noise $v$.</p><p>The correction formulas are more simple and elegant in this case:
+$$
+x^+ = x^- + (z - h^T x^-) k \\
+P^+ = P^- - s k k^T \\
+\text{with } k = P^- h / s \space \text{ and } \space s = h^T P^- h + r
+$$
+Its free from the matrix inversion as we have the scalar innovation variance $s$.</p><p>The covariance formula has a nice symmetric rank-1 update form.
+This operation is known as <code>SYR</code> BLAS subroutine.
+For example in Eigen C++ library it is provided by the method <code>SelfAdjointView::rankUpdate</code>.
+It is recommended to use a similar method of function in your implementation if possible.</p><h1 id=independent-measurements-and-sequential-updates>Independent measurements and sequential updates
+<a class=heading-link href=#independent-measurements-and-sequential-updates><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>Consider a measurement vector composed of two independent (uncorrelated) blocks:
+$$
+z = \begin{bmatrix} z_1 \\ z_2 \end{bmatrix} \\
+H = \begin{bmatrix} H_1 \\ H_2 \end{bmatrix} \\
+R = \begin{bmatrix} R_1 & 0 \\ 0 & R_2 \end{bmatrix}
+$$
+The matrix $R$ is block diagonal which represents the aforementioned independence.</p><p>From probabilistic and logical reasoning we can conclude that processing measurement $z$ is equivalent to processing measurements $z_1$ and $z_2$ sequentially in any order.
+Surprisingly it&rsquo;s hard to prove that using formal matrix transformations of the correction formulas.
+I haven&rsquo;t been able to find a simple approach to that.</p><p>A proof can be given using the equivalent &#171;inverse covariance&#187; form of the correction formulas:
+$$
+(P^+)^{-1} x^+ = (P^-)^{-1} x^- + H^T R^{-1} z \\
+(P^+)^{-1} = (P^-)^{-1} + H^T R^{-1} H
+$$
+They are more restrictive compared to the standard formulas as requiring positive definite $P$ and $R$ matrices.</p><p>Substituting the composed measurement matrices into it we get
+$$
+(P^+)^{-1} x^+ = (P^-)^{-1} x^- + H_1^T R_1^{-1} z_1 + H_2^T R_2^{-1} z_2 \\
+(P^+)^{-1} = (P^-)^{-1} + H_1^T R_1^{-1} H_1 + H_2^T R_2^{-1} H_2
+$$
+We see that these formulas are additive in the measurement blocks and thus the sequential processing is correct.</p><p>If $R$ and $P$ are not positive definite we can consider an artificial positive diagonal regularization, do the sequential processing in the standard form and then set the regularization to zero (in a limit sense).
+This is an informal proof that the sequential processing is correct as long as the standard formulas are applicable.</p><h1 id=measurements-with-diagonal-r>Measurements with diagonal $R$
+<a class=heading-link href=#measurements-with-diagonal-r><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>If the matrix $R$ is diagonal then all individual measurement components are independent.
+Such measurement are processed as a sequence of scalar measurements $z_i, h_i, r_i$ with
+$$
+h_i = (H_{:, i})^T \\
+r_i = R_{i, i}
+$$
+where $H_{:, i}$ &ndash; $i$-th row vector of $H$.</p><h1 id=measurements-with-non-diagonal-r>Measurements with non-diagonal $R$
+<a class=heading-link href=#measurements-with-non-diagonal-r><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>We can apply the sequential measurement processing in this case too by introducing an augmented vector:
+$$
+x_a = \begin{bmatrix}
+x \\
+v
+\end{bmatrix}
+$$</p><p>The apriori state estimate and covariance matrix for the augmented vector are:
+$$
+x_a^- = \begin{bmatrix}
+x^- \\
+0
+\end{bmatrix} \\
+P_a^- = \begin{bmatrix}
+P^- & 0 \\
+0 & R
+\end{bmatrix}
+$$</p><p>The measurement in terms of the augmented vector:
+$$
+z = H x + v = H_a x_a + v_a \\
+\text{with } H_a = \begin{bmatrix}
+H & I
+\end{bmatrix}
+$$
+The dummy noise vector $v_a$ has zero covariance matrix $R_a = 0$.</p><p>Then the augmented measurement model $z, H_a, R_a$ is processed for $x_a^-, P_a^-$ using the sequential approach to get $x_a^+, P_a^+$.
+The head of $x_a^+$ and the top-left corner of $P_a^+$ contain the required aposteriori $x^+$ and $P^+$.</p><h1 id=overall-algorithm>Overall algorithm
+<a class=heading-link href=#overall-algorithm><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>The following algorithm can be used to process an arbitrary measurement model $z, H, R$:</p><ol><li>If $R$ is diagonal: apply the sequential processing to the original model</li><li>If $R$ is not diagonal: build the augmented model and apply the sequential processing to it</li></ol><p>The core algorithm in both cases is the scalar measurement processing described above, which is easy to implement and robust.</p></div><footer></footer></article><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}]})'></script></section></div><footer class=footer><section class=container>©
+2023
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.</section></footer></main><script src=/js/coder.min.236049395dc3682fb2719640872958e12f1f24067bb09c327b233e6290c7edac.js integrity="sha256-I2BJOV3DaC+ycZZAhylY4S8fJAZ7sJwyeyM+YpDH7aw="></script></body></html>
