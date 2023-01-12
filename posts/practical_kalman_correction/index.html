@@ -61,10 +61,10 @@ This is an informal proof that the sequential processing is correct as long as t
 <span class=sr-only>Link to heading</span></a></h1><p>If the matrix $R$ is diagonal then all individual measurement components are independent.
 Such measurement are processed as a sequence of scalar measurements $z_i, h_i, r_i$ with
 $$
-h_i = (H_{:, i})^T \\
+h_i = (H_{i, :})^T \\
 r_i = R_{i, i}
 $$
-where $H_{:, i}$ is the $i$-th row of $H$.</p><h1 id=measurements-with-non-diagonal-r>Measurements with non-diagonal $R$
+where $H_{i, :}$ is the $i$-th row of $H$.</p><h1 id=measurements-with-non-diagonal-r>Measurements with non-diagonal $R$
 <a class=heading-link href=#measurements-with-non-diagonal-r><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
 <span class=sr-only>Link to heading</span></a></h1><p>We can apply the sequential measurement processing in this case too by introducing an augmented vector:
 $$
