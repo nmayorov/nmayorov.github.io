@@ -83,10 +83,10 @@ This is an informal proof that the sequential processing is correct as long as t
 If the matrix $R$ is diagonal then all individual measurement components are independent.
 Such measurement are processed as a sequence of scalar measurements $z_i, h_i, r_i$ with
 $$
-h_i = (H_{:, i})^T \\\\
+h_i = (H_{i, :})^T \\\\
 r_i = R_{i, i}
 $$
-where $H_{:, i}$ -- $i$-th row vector of $H$.
+where $H_{i, :}$ is the $i$-th row of $H$.
 
 # Measurements with non-diagonal $R$
 
