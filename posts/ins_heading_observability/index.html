@@ -1,0 +1,157 @@
+<!doctype html><html lang=en><head><title>Heading observability in Inertial Navigation Systems · My Blog</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=color-scheme content="light dark"><meta name=description content="It&rsquo;s generally known that the heading angle in Inertial Navigation Systems (INS) is observable when the system undergoes acceleration (including turns at nonzero velocity). However if we look at the &ldquo;modified error model&rdquo;, it may seem that merely significantly nonzero constant velocity is sufficient. Here I want to figure out this subject using formal observability criteria and then give it intuitive physical explanation.
+INS equations in 2 dimensions Link to heading To investigate heading observability, a simplified version of INS for a 2-dimensional motion is fully sufficient."><meta name=keywords content><meta name=twitter:card content="summary"><meta name=twitter:title content="Heading observability in Inertial Navigation Systems"><meta name=twitter:description content="It&rsquo;s generally known that the heading angle in Inertial Navigation Systems (INS) is observable when the system undergoes acceleration (including turns at nonzero velocity). However if we look at the &ldquo;modified error model&rdquo;, it may seem that merely significantly nonzero constant velocity is sufficient. Here I want to figure out this subject using formal observability criteria and then give it intuitive physical explanation.
+INS equations in 2 dimensions Link to heading To investigate heading observability, a simplified version of INS for a 2-dimensional motion is fully sufficient."><meta property="og:title" content="Heading observability in Inertial Navigation Systems"><meta property="og:description" content="It&rsquo;s generally known that the heading angle in Inertial Navigation Systems (INS) is observable when the system undergoes acceleration (including turns at nonzero velocity). However if we look at the &ldquo;modified error model&rdquo;, it may seem that merely significantly nonzero constant velocity is sufficient. Here I want to figure out this subject using formal observability criteria and then give it intuitive physical explanation.
+INS equations in 2 dimensions Link to heading To investigate heading observability, a simplified version of INS for a 2-dimensional motion is fully sufficient."><meta property="og:type" content="article"><meta property="og:url" content="https://nmayorov.github.io/posts/ins_heading_observability/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-04-02T00:00:00+00:00"><meta property="article:modified_time" content="2023-04-02T00:00:00+00:00"><link rel=canonical href=https://nmayorov.github.io/posts/ins_heading_observability/><link rel=preload href="/fonts/forkawesome-webfont.woff2?v=1.2.0" as=font type=font/woff2 crossorigin><link rel=stylesheet href=/css/coder.min.c4d7e93a158eda5a65b3df343745d2092a0a1e2170feeec909b8a89443903c6a.css integrity="sha256-xNfpOhWO2lpls980N0XSCSoKHiFw/u7JCbiolEOQPGo=" crossorigin=anonymous media=screen><link rel=icon type=image/png href=/images/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/images/favicon-16x16.png sizes=16x16><link rel=apple-touch-icon href=/images/apple-touch-icon.png><link rel=apple-touch-icon sizes=180x180 href=/images/apple-touch-icon.png><link rel=manifest href=/site.webmanifest><link rel=mask-icon href=/images/safari-pinned-tab.svg color=#5bbad5><meta name=generator content="Hugo 0.111.3"></head><body class="preload-transitions colorscheme-light"><div class=float-container><a id=dark-mode-toggle class=colorscheme-toggle><i class="fa fa-adjust fa-fw" aria-hidden=true></i></a></div><main class=wrapper><nav class=navigation><section class=container><a class=navigation-title href=/>My Blog</a>
+<input type=checkbox id=menu-toggle>
+<label class="menu-button float-right" for=menu-toggle><i class="fa fa-bars fa-fw" aria-hidden=true></i></label><ul class=navigation-list><li class=navigation-item><a class=navigation-link href=/posts/>Posts</a></li></ul></section></nav><div class=content><section class="container post"><article><header><div class=post-title><h1 class=title><a class=title-link href=https://nmayorov.github.io/posts/ins_heading_observability/>Heading observability in Inertial Navigation Systems</a></h1></div><div class=post-meta><div class=date><span class=posted-on><i class="fa fa-calendar" aria-hidden=true></i>
+<time datetime=2023-04-02T00:00:00Z>April 2, 2023</time></span>
+<span class=reading-time><i class="fa fa-clock-o" aria-hidden=true></i>
+6-minute read</span></div></div></header><div><p>It&rsquo;s generally known that the heading angle in Inertial Navigation Systems (INS) is observable when the system undergoes acceleration (including turns at nonzero velocity).
+However if we look at the <a href=https://nmayorov.github.io/posts/ins_error_equations/#modified-phi-vector-error-model>&ldquo;modified error model&rdquo;</a>,
+it may seem that merely significantly nonzero constant velocity is sufficient.
+Here I want to figure out this subject using formal observability criteria and then give it intuitive physical explanation.</p><h1 id=ins-equations-in-2-dimensions>INS equations in 2 dimensions
+<a class=heading-link href=#ins-equations-in-2-dimensions><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>To investigate heading observability, a simplified version of INS for a 2-dimensional motion is fully sufficient.
+The state is described relative to the world frame $n$ by 5 variables:</p><ul><li>Position vector $r^n$ with 2 components</li><li>Velocity vector $v^n$ with 2 components</li><li>Heading angle $\psi$</li></ul><p>The state variables obey the following differential equations:
+$$
+\dot{r}^n = v^n \\
+\dot{v}^n = C^n_b f^b \\
+\dot{\psi} = \omega
+$$
+Here $f^b$ and $\omega$ are acceleration and (vertical) angular rate measured by IMU.
+And $C^n_b = R(\psi)$ is a 2-dimensional rotation matrix computed from the heading angle:
+$$
+R(\alpha) \coloneqq \begin{bmatrix}
+\cos \alpha & -\sin \alpha \\
+\sin \alpha & \cos \alpha
+\end{bmatrix}
+$$</p><p>The estimates state variables we denote as $\hat{r}, \hat{V}, \hat{\psi}$</p><h1 id=error-equations>Error equations
+<a class=heading-link href=#error-equations><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>To use a linear theory we need to derived a linear system for the INS errors.</p><h2 id=natural-error-parametrization>Natural error parametrization
+<a class=heading-link href=#natural-error-parametrization><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Natural error parameters:</p><ul><li>Position error: $\Delta r = \hat{r} - r^n$</li><li>Velocity error: $\Delta V = \hat{V} - V^n$</li><li>Heading error: $\Delta \psi = \hat{\psi} - \psi$</li></ul><p>The error equations:
+$$
+\Delta \dot{r} = \Delta v \\
+\Delta \dot{v} = (\mathcal{S} C^n_b f^b) \Delta \psi + C^n_b \Delta f_b \\
+\Delta \dot{\psi} = \Delta \omega
+$$
+With</p><ul><li>$\Delta f^b$ and $\Delta \omega$ &ndash; accelerometer and angular rate measurement errors</li><li>$S \coloneqq \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}$</li></ul><h2 id=modified-error-parametrization>Modified error parametrization
+<a class=heading-link href=#modified-error-parametrization><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>Here the velocity error is measured relative to the &ldquo;platform frame&rdquo; (where accelerometer readings are projected):
+$$
+\delta v = \hat{v} - R(\Delta \psi) v^n \approx \Delta v - (\mathcal{S} v^n) \Delta \psi
+$$</p><p>The error equations:
+$$
+\Delta \dot{r} = \delta v + (\mathcal{S} v^n) \Delta \psi \\
+\delta \dot{v} = -(S v^n) \Delta \omega + C^n_b \Delta f^b \\
+\Delta \dot{\psi} = \Delta \omega
+$$</p><h1 id=observability-analysis>Observability analysis
+<a class=heading-link href=#observability-analysis><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>Let&rsquo;s assume that velocity measurements in the world frame are available (like from GNSS).
+From the standard error model we see that the heading error is coupled into the velocity error when there is acceleration.
+Thus we may assume that the heading is observable only when the vehicle undergoes acceleration.</p><p>On the other hand, if we consider the modified error model, the heading error is coupled into the true velocity error as
+$$
+\Delta v = \delta v + (\mathcal{S} v^n) \Delta \psi
+$$
+And in the similar fashion into the position error growth.
+Thus it looks like that the heading may be observable from the velocity measurements when the velocity is nonzero.</p><p>These two conclusions contradict each other and therefore we want to carry out a formal observability analysis.
+To do that for a time-invariant linear system with $n$ variables with the system matrix $F$ and the observation matrix $H$ one should check the rank of the matrix:
+$$
+M = \begin{bmatrix}
+H \\
+H F \\
+\cdots \\
+H F^{n-1}
+\end{bmatrix}
+$$
+For a fully observable system this matrix must have $n$ linearly independent rows.</p><p>To use this result we must consider a time-invariant system for the INS errors with constant heading and velocity/acceleration.
+For simplicity we assume $\psi = 0$ and error-free inertial measurements.</p><h2 id=standard-error-model-with-constant-acceleration>Standard error model with constant acceleration
+<a class=heading-link href=#standard-error-model-with-constant-acceleration><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>We can exclude the position error variables as irrelevant.
+Then write the error model componentwise:
+$$
+\Delta \dot{v}_1 = -f_2 \Delta \psi \\
+\Delta \dot{v}_2 = f_1 \Delta \psi \\
+\Delta \dot{\psi} = 0
+$$
+The velocity error components are observed:
+$$
+z_1 = \Delta v_1 \\
+z_2 = \Delta v_2
+$$
+Thus we have the following matrices:
+$$
+F = \begin{bmatrix}
+0 & 0 & -f_2 \\
+0 & 0 & f_1 \\
+0 & 0 & 0
+\end{bmatrix} \\
+H = \begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0
+\end{bmatrix}
+$$
+The observability test matrix (the first 4 rows):
+$$
+M = \begin{bmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+0 & 0 & -f_2 \\
+0 & 0 & f_1
+\end{bmatrix}
+$$
+We can clearly see that when $f \neq 0$ the system is fully observable.
+That is the velocity components and the heading angle will be determined exactly if there is no noise in the system.</p><h2 id=modified-error-model-with-constant-velocity>Modified error model with constant velocity
+<a class=heading-link href=#modified-error-model-with-constant-velocity><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h2><p>The error equations:
+$$
+\delta \dot{v}_1 = 0 \\
+\delta \dot{v}_2 = 0 \\
+\Delta \dot{\psi} = 0
+$$
+The full velocity error are observed:
+$$
+z_1 = \delta v_1 - v_2 \Delta \psi \\
+z_2 = \delta v_2 + v_1 \Delta \psi
+$$
+The system and observations matrices:
+$$
+F = \begin{bmatrix}
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+0 & 0 & 0
+\end{bmatrix} \\
+H = \begin{bmatrix}
+1 & 0 & -v_2 \\
+0 & 1 & v_1
+\end{bmatrix}
+$$
+With $F$ being zero it is obvious that the system is not fully observable.
+Only the two linear combinations as expressed by $z_1$ and $z_2$ are observable.</p><p>If we add measurements of the velocity in the body frame (by radar or odometer):
+$$
+z_3 = \delta v_1 \\
+z_4 = \delta v_2
+$$
+We get the observation matrix
+$$
+H = \begin{bmatrix}
+1 & 0 & -v_2 \\
+0 & 1 & v_1 \\
+1 & 0 & 0 \\
+0 & 1 & 0
+\end{bmatrix}
+$$
+It has 3 independent rows as long $v \neq 0$.
+That is the system is fully observable when there is GNSS and odometer measurements are available and the speed is not zero.</p><h1 id=discussion>Discussion
+<a class=heading-link href=#discussion><i class="fa fa-link" aria-hidden=true title="Link to heading"></i>
+<span class=sr-only>Link to heading</span></a></h1><p>For GNSS aides INS, the heading is observable only when the system undergoes accelerations.
+With the constant nonzero velocity the heading error is coupled into position error growth (or &ldquo;true&rdquo; velocity errors), however there is no way to separate the heading error and the &ldquo;odometric&rdquo; velocity errors.
+If body velocity measurements are added, then the system becomes fully observable.</p><p>These results can be understood using the following principle: heading angle is observed by matching the same nonzero vector measured in the body and the world frames.</p><p>The acceleration vector is measured in the body frame by IMU and in the world frame it can be inferred by differentiation of the measured velocity.
+Only in a navigation filter it is done implicitly, but the core principle is as stated.
+If there is no acceleration, there is no vector to match and heading estimation is impossible.</p><p>If there are velocity measurements in the body frame, they can be matched with velocity measurements in the world frame and the heading is estimated from that.
+Again, in real systems it is done implicitly by means of a Kalman filter of some sort.
+In practice it means that velocity measurements in the body frame (along with GNSS velocity) are useful to enhance heading estimation.</p></div><footer></footer></article><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css integrity=sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js integrity=sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx crossorigin=anonymous></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js integrity=sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR crossorigin=anonymous onload='renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}]})'></script></section></div><footer class=footer><section class=container>©
+2023
+·
+Powered by <a href=https://gohugo.io/>Hugo</a> & <a href=https://github.com/luizdepra/hugo-coder/>Coder</a>.</section></footer></main><script src=/js/coder.min.236049395dc3682fb2719640872958e12f1f24067bb09c327b233e6290c7edac.js integrity="sha256-I2BJOV3DaC+ycZZAhylY4S8fJAZ7sJwyeyM+YpDH7aw="></script></body></html>
