@@ -370,10 +370,10 @@ $$
 
 ## Attitude error equation
 
-Let's write differential equations for $\hat{C}^n_b$ and $\hat{C}^c_b$ which are misaligned by vector $\psi$:
+Let's write differential equations for $\hat{C}^n_b$ and $C^c_b$ which are misaligned by vector $\psi$:
 $$
 \dot{\hat{C}}^n_b = \hat{C}^n_b [(\omega_{ib}^b + \epsilon^b) \times] - [\omega_{ic}^c \times] \hat{C}^n_b \\\\
-\dot{C}^n_b = \hat{C}^n_b [\omega_{ib}^b \times] - [\omega_{ic}^c \times] C^c_b
+\dot{C}^c_b = C^c_b [\omega_{ib}^b \times] - [\omega_{ic}^c \times] C^c_b
 $$
 We see that the second angular velocity $\omega_{ic}^c$ is the same in both equations.
 Thus using the general equation for an attitude error vector we get
