@@ -33,9 +33,9 @@ $$
 
 # The update step in the Extended Kalman Filter 
 
-In a similar fashion, a prior distribution $X \sim \mathcal{N}(X^-, P^-)$ is optimally combined with a nonlinear measurement $Z = f(X) + v$ with $v \sim \mathcal{N}(0, R)$, by forming an optimization problem:
+In a similar fashion, a prior distribution $X \sim \mathcal{N}(X^-, P^-)$ is optimally combined with a nonlinear measurement $Z = h(X) + v$ with $v \sim \mathcal{N}(0, R)$, by forming an optimization problem:
 $$
-\min_X E(X) = \frac{1}{2} (X - X^-)^T (P^-)^{-1} (X - X^-) + \frac{1}{2} (f(X) - Z)^T R^{-1} (f(X) - Z)
+\min_X E(X) = \frac{1}{2} (X - X^-)^T (P^-)^{-1} (X - X^-) + \frac{1}{2} (h(X) - Z)^T R^{-1} (h(X) - Z)
 $$
 This is a nonlinear least-squares problem which can be solved iteratively by forming a sequence of linear subproblems using linearization around the current estimate.
 
@@ -48,8 +48,8 @@ $$
 Where the following variables were introduced:
 $$
 x^- = X^- - X_i \\\\
-z_i = Z - f(X_i) \\\\
-H_i = \left.\dfrac{\partial f(X)}{\partial X}\right\vert\_{X_i}
+z_i = Z - h(X_i) \\\\
+H_i = \left.\dfrac{\partial h(X)}{\partial X}\right\vert\_{X_i}
 $$
 The linear subproblem has the form as in the linear Kalman filter update step for which the solution is known:
 $$
@@ -65,9 +65,9 @@ The simplest strategy is to set $\alpha_i = 1$ which works well when $X_i$ is cl
 
 In the iterated EKF the full corrections are applied with $\alpha_i = 1$:
 $$
-X_{i + 1} = X_i + x_i = X_i + X^- - X_i + K_i (Z - f(X_i) - H_i (X^- - X_i)) \approx X^- + K_i (Z - f(X^-))
+X_{i + 1} = X_i + x_i = X_i + X^- - X_i + K_i (Z - h(X_i) - H_i (X^- - X_i)) \approx X^- + K_i (Z - h(X^-))
 $$
-The last approximate equality follows from the first-order Taylor expansion of $f(X)$.
+The last approximate equality follows from the first-order Taylor expansion of $h(X)$.
 The whole procedure is already based on this and thus such substitution is justifiable.
 If implemented using the last equation, the iterated EKF update comes down to updating the point for Jacobian computation $H_i$.
 It is generally known that a correct Jacobian value is the most important for consistent EKF update and so this scheme makes practical and conceptual sense.
@@ -101,7 +101,7 @@ For example, imagine that the measurement noise instead of normal distribution h
 Empirically it means that it is more heavy-tailed with more likely outliers.
 This situation can be handled by considering a proper loss function (can be thought as negative logarithm of probability):
 $$
-E(X) = \frac{1}{2} (X - X^-)^T (P^-)^{-1} (X - X^-) + \sqrt{2} \sum_{j = 0}^{N - 1} \frac{|f_j(X) - Z_j|}{\sigma_j}
+E(X) = \frac{1}{2} (X - X^-)^T (P^-)^{-1} (X - X^-) + \sqrt{2} \sum_{j = 0}^{N - 1} \frac{|h_j(X) - Z_j|}{\sigma_j}
 $$
 Here $j$ denotes vector index and $\sigma_j$ is a standard deviation of independent noise components.
 This optimization problem is considerably more difficult, but it is well defined and can be solved by a proper optimization algorithm.
