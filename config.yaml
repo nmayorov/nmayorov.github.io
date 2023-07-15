@@ -1,6 +1,6 @@
 baseURL: 'https://nmayorov.github.io'
 languageCode: 'en-us'
-title: 'My Blog'
+title: 'Navigating Uncertainty'
 theme: 'PaperMod'
 
 params:
@@ -10,10 +10,39 @@ params:
   ShowBreadCrumbs: true
   author: "Nikolay Mayorov"
 
+  homeInfoParams:
+    Title: "About this blog"
+    Content: >
+      
+      - Hi! I'm Nikolay Mayorov -- a software developer with an emphasis on math, algorithms and numerical methods.
+
+      - 
+
+      - My main areas of expertise are "classical" navigation and applied estimation theory.
+        These include things like basic inertial and satellite navigation, tight INS/GNSS integration, Real Time Kinematics positioning, Kalman filters, nonlinear least squares and optimization in dynamic systems.
+        In general I strive to build practical algorithms and systems which solve real life problems based on rigorous mathematical foundations.
+      
+      -
+
+      - The notes here are on theoretical and applied aspects of estimation and navigation algorithms: some classical and some not, which I'm figuring out for myself.
+        Currently there is hardly any code provided as I focus more on underlying concepts, but this approach might change in the future.
+
+      -
+
+      - For questions or proposals contact me via the links below.
+
+  socialIcons:
+    - name: github
+      url: "https://github.com/nmayorov"
+    - name: email
+      url: "mailto:nikolay.mayorov@zoho.com"
+    - name: telegram
+      url: "https://t.me/nmayorov"
+
 menu:
   main:
-    - name: Archive
-      title: Archive
+    - name: All posts
+      title: All posts
       url: archives
     - name: Tags
       title: Tags
