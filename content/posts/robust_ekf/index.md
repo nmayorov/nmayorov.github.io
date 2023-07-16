@@ -117,7 +117,7 @@ Now we want to achieve the same form for an arbitrary loss function $\rho(u)$.
 
 ## Transformation to the standard Kalman form
 
-For simplicity let's assume that $R = I$, which can be achieved by transforming $Z$ and $f$ by Cholesky factors of $R$ (shown at the end).
+For simplicity let's assume that $R = I$, which can be achieved by transforming $Z$ and $h$ by Cholesky factors of $R$ (shown at the end).
 Consider the block:
 $$
 H^T (\rho^\prime I + 2 \rho^{\prime \prime} z z^T ) H = \rho^\prime H^T \left(I + \frac{2 \rho^{\prime \prime}}{\rho^\prime} z z^T \right) H
@@ -129,20 +129,20 @@ The matrix $S$ must satisfy then
 $$
 S^T S = \rho^\prime \left(I + \frac{2 \rho^{\prime \prime}}{\rho^\prime} z z^T \right)
 $$
-We search it in the following form:
+It is searched in the following form:
 $$
 S = \sqrt{\rho^\prime} \left(I - \alpha \dfrac{z z^T}{\lVert z \rVert^2} \right)
 $$
-And by substitution get the equation for $\alpha$:
+And after the substitution we get the following equation for $\alpha$:
 $$
 -\dfrac{2 \alpha}{\lVert z \rVert^2} + \dfrac{\alpha^2}{\lVert z \rVert^2} = \dfrac{2 \rho^{\prime \prime}}{\rho^\prime} \\\\ [2pt]
 \alpha^2 - 2 \alpha - \frac{2 \rho^{\prime \prime} \lVert z \rVert^2}{\rho^\prime} = 0
 $$
-A numerically stable way to find the smallest root of this equation is as follows:
+A numerically stable way to find the smallest root of this quadratic equation is as follows:
 $$
 \alpha = - \dfrac{2 \rho^{\prime \prime} \lVert z \rVert^2 / \rho^\prime}{1 + \sqrt{1 + 2 \rho^{\prime \prime} \lVert z \rVert^2 / \rho^\prime}}
 $$
-To avoid taking the square root of a negative number and bound $\alpha$ below 1 (to prevent scaling by zero) we use a guarded formula with a small value of $\epsilon$:
+To avoid taking the square root of a negative number and bound $\alpha$ below 1 (to prevent scaling by zero) a guarded formula with a small value of $\epsilon$ is used:
 $$
 \beta = \max \left(2 \rho^{\prime \prime} \lVert z \rVert^2 / \rho^\prime, -1 + \epsilon^2 \right) \\\\
 \alpha = -\frac{\beta}{1 + \sqrt{1 + \beta}} 
@@ -189,7 +189,7 @@ $$
 \alpha = -\frac{\beta}{1 + \sqrt{1 + \beta}} 
 $$
 
-The equation in the transformed form corresponds to the linear Kalman correction formula.
+The equation in the transformed form corresponds to the linear Kalman correction formula with $R = I$.
 
 # Processing independent measurements
 
@@ -200,4 +200,4 @@ The scaling formulas remain the same, only works with scalars.
 
 The robust Extended Kalman update step as an optimization procedure follows the same logic as described in the [previous post]({{<ref "/content/posts/ekf_update_optimization.md">}}).
 But on each iterations the residual vector $z$ and the measurement matrix $H$ are scaled to account for a robust loss function as described above.
-Because the optimization problem becomes more difficult and differs significantly from the standard EKF update, the iterations must be done with a line search step control until convergence.
+Because the optimization problem becomes more difficult and differs significantly from the standard EKF update, the iterations must be done with a line search step control until the convergence.
