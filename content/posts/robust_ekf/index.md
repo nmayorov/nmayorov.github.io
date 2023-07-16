@@ -34,7 +34,7 @@ These are depicted below:
 
 [![loss_functions](figs/loss_functions.svg)](figs/loss_functions.svg)
 
-# Adjusting loss function by the number of measurements
+# Adjusting the loss function by the number of measurements
 
 There is an important subtlety that depending on the number of measurements the loss function must be adjusted.
 With $m$ measurements, the random variable $(h(X) - Z)^T R^{-1}  (h(X) - Z)$ (assuming $X$ to be fixed at the optimum) has a theoretical chi-squared distribution with $m$ degrees of freedom (assuming noise to be normally distributed).
@@ -54,18 +54,18 @@ From this we can compute the required scaling as
 $$
 s(m) = \mathrm{ICDF}_{\chi^2_m}(\mathrm{CDF}\_{\chi^2_1}(1))
 $$
-Where $\mathrm{CDF}$ and $\mathrm{ICDF}$ stands for cumulative distribution function and its inverse respectively.
+Where $\mathrm{CDF}$ and $\mathrm{ICDF}$ stand for cumulative distribution function and its inverse respectively.
 
 Here is the list of approximate values of $s(m)$ for small $m$:
 $$
 s(1) = 1; s(2) = 2.3; s(3) = 3.5; s(4) = 4.7; s(5) = 5.9
 $$
 
-# Applying loss function to individual measurements
+# Applying the loss function to individual measurements
 
 If the measurements are independent (possibly after the decorrelation procedure) we can formulate another form of the cost function:
 $$
-E(X) = \frac{1}{2} (X - X^-)^T (P^-)^{-1} (X - X^-) + \frac{1}{2} \sum_j \rho \left( \left( \dfrac{f_j(X) - Z_j}{\sigma_j} \right)^2 \right)
+E(X) = \frac{1}{2} (X - X^-)^T (P^-)^{-1} (X - X^-) + \frac{1}{2} \sum_j \rho \left( \left( \dfrac{h_j(X) - Z_j}{\sigma_j} \right)^2 \right)
 $$
 
 Whether the measurements should be treated independently depends on an application.
@@ -88,8 +88,8 @@ $$
 Here the following helper notation has been used:
 $$
 x^- = X^- - X \\\\
-z = Z - f(X) \\\\
-H = \left.\dfrac{\partial h}{\partial X}\right\vert_X
+z = Z - h(X) \\\\
+H = \dfrac{\partial h(X)}{\partial X}
 $$
 
 We apply the Gauss-Newton approximation and neglect the term with the second derivatives of $h$ in the Hessian:
@@ -200,4 +200,4 @@ The scaling formulas remain the same, only works with scalars.
 
 The robust Extended Kalman update step as an optimization procedure follows the same logic as described in the [previous post]({{<ref "/content/posts/ekf_update_optimization.md">}}).
 But on each iterations the residual vector $z$ and the measurement matrix $H$ are scaled to account for a robust loss function as described above.
-Because the optimization problem became more difficult and differs significantly from the standard EKF update, the iterations must be done with line search step control until convergence.
+Because the optimization problem becomes more difficult and differs significantly from the standard EKF update, the iterations must be done with a line search step control until convergence.
