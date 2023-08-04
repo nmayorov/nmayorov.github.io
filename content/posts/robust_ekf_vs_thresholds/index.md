@@ -85,8 +85,8 @@ The line named "linear+rejection" depicts the solution with the outlier rejectio
 
 The following can be noted about these plots:
 
-1. "Soft-l1" loss works like a smoothed version of Huber loss
-2. Cauchy loss works significantly different than "soft-l1" and Huber: for severe outliers the state correction goes to zero
+1. "Soft-L1" loss works like a smoothed version of Huber loss
+2. Cauchy loss works significantly different than "soft-L1" and Huber: for severe outliers the state correction goes to zero
 3. Generally for all loss functions the soft rejection threshold (relative to $\sqrt{S}$) increases with $P/R$
 4. Cauchy loss behaves more similarly to the classical outlier rejection approach and from an engineering standpoint perhaps looks the most appealing
 5. In general a particular choice of a loss function significantly changes the behavior
