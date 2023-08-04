@@ -22,13 +22,15 @@ Let's state its properties formally:
 - $\rho^\prime(u) > 0$
 - $\rho^{\prime\prime}(u) \leq 0$
 
-Let's consider 3 possible function as an example:
+Let's consider 4 possible function as an example:
 
 1. Trivial or linear cost function corresponding to the standard formulation -- $\rho(u) = u$.
-1. "Soft-L1" loss function -- $\rho(u) = 2 (\sqrt{1 + u} - 1)$. 
-   For large $u = z^2$ we get $\rho(z^2) \approx |z|$ which corresponds to the robust L1-regression
-2. Cauchy loss function -- $\rho(u) = \log(1 + u)$. 
-   Such function penalties outliers significantly more heavily than the previous one
+2. Huber loss function -- $\rho(u) = \begin{cases} u & u < 1 \\\\ 2 \sqrt{u} - 1 & u \geq 1 \end{cases}$
+3. "Soft-L1" loss function -- $\rho(u) = 2 (\sqrt{1 + u} - 1)$. 
+   For large $u = z^2$ we get $\frac{1}{2}\rho(z^2) \approx |z|$ which corresponds to the robust L1-regression.
+   To be fair, Huber loss function has the same property, but in general these names are quite arbitrary
+4. Cauchy loss function -- $\rho(u) = \log(1 + u)$. 
+   Such function penalties outliers significantly more heavily than the previous ones
 
 These are depicted below:
 
