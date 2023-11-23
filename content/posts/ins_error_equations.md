@@ -158,7 +158,7 @@ When $\psi$ is used the full attitude error is computed as $\phi = \theta + \psi
 
 Error equations are linear differential equations for position, velocity and attitude errors with time varying coefficients, which depend on position, velocity and attitude of INS.
 Gyro and accelerometers error also appear in right hand side of the equations.
-They are used in estimation algorithms for INS like linearized Kalman filter, Extended Kalman Filter, etc.
+They are used in estimation algorithms for INS like linearized Kalman filter, extended Kalman filter, etc.
 
 Linearity of the equations are achieved by a linearization process, meaning that the equations are approximate in nature and valid only as long as the errors are small.
 The exact meaning of the errors being small will be given in the end.
@@ -409,7 +409,7 @@ $$
 $$
 Here we see that the attitude and position errors are directly coupled.
 
-# Velocity error derivation
+## Velocity error derivation
 
 Let's write differential equations for $\hat{V}$ and $V^p$ using the common notation:
 $$
@@ -472,7 +472,7 @@ And then for $\hat{V} \times \theta$ and $\hat{V} \times \psi$ to be valid to th
 $$
 \Delta V \ll V^n
 $$
-For $\phi$-angle error model and its modified version other (but conceptually similar) arguments might be made to come up with the same conclusion.
+For $\phi$-angle error model and its modified version other (but conceptually similar) arguments can be made to come up with the same conclusion.
 
 # Summary and discussion
 
