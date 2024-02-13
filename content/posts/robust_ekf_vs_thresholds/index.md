@@ -24,7 +24,7 @@ In the robust optimization approach the following term appears in the cost funct
 $$
 \rho\left((z - H x)^T R^{-1} (z - H x)\right)
 $$
-So here the innovations are scaled by $R$, but effectively rather "postfit" innovations are involved (i.e. it is evaluated at the final solution $x^+$).
+So here the innovations are scaled by $R$, but these are effectively "postfit" innovations, i.e. evaluated at the final solution $x^+$.
 Intuitively we want to see that the decision of whether a measurement $z$ is a "soft" outlier is based on the normalized innovations $(z - H x^-)^T S^{-1} (z - H x^-)$ as well. 
 However for the robust loss function approach it's not obvious at all.
 
@@ -48,7 +48,7 @@ Note that $\rho^\prime$ is evaluated for the unknown $x^+$.
 This "balancing" nonlinear equation can be solved to find $x^+$.
 We know that the standard model has $\rho^\prime = 1$ and a robust model has $\rho^\prime < 1$ and thus the correction $x^+ - x^-$ is expected to be smaller for a robust model compared to the standard model.
 
-To get further insides consider a scalar case (robust_ekf_analysis
+To get further insides consider a scalar case:
 $$
 \rho(u) = \begin{cases}
 u & u < 1 \\\\
