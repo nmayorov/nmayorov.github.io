@@ -17,7 +17,7 @@ has theoretical covariance
 $$
 S = H P^- H^T + R
 $$
-The quadratic form $e^T S^{-1} e$ is expected to have a $\chi$-squared distribution and its excessively large values indicate a possible outliers, which should be rejected.
+The quadratic form $e^T S^{-1} e$ is expected to have a $\chi$-squared distribution and its excessively large values indicate a possible outlier, which should be rejected.
 For scalar measurements it is equivalent to rejection measurements when the innovation is larger than (for example) 3$\sigma$ with $\sigma = \sqrt{S}$.
 
 In the robust optimization approach the following term appears in the cost function:
