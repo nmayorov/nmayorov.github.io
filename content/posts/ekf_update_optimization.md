@@ -1,5 +1,5 @@
 ---
-title: "Extend Kalman Filter update step as an optimization problem"
+title: "Extended Kalman Filter update step as an optimization problem"
 date: 2023-05-04
 katex: true
 ---
