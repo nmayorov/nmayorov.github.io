@@ -13,8 +13,8 @@ The formulations is analogous to the [linear case]({{<ref "/content/posts/rts_as
 We use uppercase letters to denote variables participating in the nonlinear model. 
 Time transition and measurement equations for which are
 $$
-Z_k = f_k(X_k) + V_k \\\\
-X_{k+1} = h_k(X_k, W_k)
+X_{k+1} = f_k(X_k, W_k) \\\\
+Z_k = h_k(X_k) + V_k 
 $$
 All the other assumptions remain the same. 
 The task is to estimate $X_k$ for epochs $k = 0, 1, \ldots, N$.
