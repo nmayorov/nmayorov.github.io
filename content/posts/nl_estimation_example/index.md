@@ -1,5 +1,5 @@
 ---
-title: "Solving a nonlinear estimation problem by optimization"
+title: "Example of a nonlinear estimation problem solved by optimization"
 date: 2022-12-06
 katex: true
 ---
@@ -8,7 +8,7 @@ Here I want to demonstrate how the [proposed nonlinear estimation algorithm]({{<
 
 # Model formulation
 
-As a dynamics system for variable $y$ I consider a nonlinear damped oscillator with an external force $a$:
+As a dynamic system for variable $y$ I consider a nonlinear damped oscillator with an external force $a$:
 $$
 \ddot{y} + 2 \eta \omega \dot{y} (1 + \xi \dot{y}^2) + \omega^2 \sin y = a
 $$
@@ -35,9 +35,9 @@ $$
 Applying the first-order integration method we get the following discrete time equation:
 $$
 x_{k + 1} = f(x_k, a_k) \\\\
-\text{with }f(x, f) = \begin{bmatrix}
+\text{with }f(x, a) = \begin{bmatrix}
 x_1 + \tau x_2 \\\\
-x_2 - \tau (\omega^2 \sin x_1 + 2 \eta \omega x_2 (1 + \xi x_2^2) + f)
+x_2 - \tau (\omega^2 \sin x_1 + 2 \eta \omega x_2 (1 + \xi x_2^2) + a)
 \end{bmatrix}
 $$
 Let's introduce the noise sources into it:
@@ -101,7 +101,7 @@ $$
 Measurement noise covariance:
 $$
 R = \begin{bmatrix}
-0.1^2
+(0.1 \text{ rad})^2
 \end{bmatrix}
 $$
 Prior mean and covariance:
@@ -132,14 +132,13 @@ The depicted variables have the following meaning:
 * "Total cost" -- value of the total cost function
 * "Constraints l1-norm" -- l1-norm of the time transition equation residuals (summed over all epochs)
 
-The solution at iteration 0 is the EKF solution: it has the lowest cost function (zero prior and noise costs), but doesn't at all satisfies time transition equations.
+The solution at iteration 0 is the EKF solution: it has the lowest cost function (zero prior and noise costs), but doesn't at all satisfy the time transition equations.
 After 1 iteration the cost function almost reaches its optimal value. 
 Further iterations steadily reduce the constraints violation, which improves the solution smoothness.
 
 In this problem 1 iteration, which corresponds to one smoother iteration (sort of <<Extended Kalman Smoother>>), gives a solution very close to the optimal and quite smooth.
-But it is generally not guaranteed and the optimization approach gives a proper way to reason about convergence and estimation quality.
-
-Values of $\mu$ used in the [merit function]({{<ref "/content/posts/nonlinear_batch_estimation.md#merit-function-and-line-search">}}) by iteration are depicted below
+But it is generally not guaranteed and the optimization 
+/uj Why 1990? What breakthrough in programming style occurred that year?ntent/posts/nonlinear_batch_estimation.md#merit-function-and-line-search">}}) by iteration are depicted below
 
 [![mu](figs/mu.svg)](figs/mu.svg)
 
