@@ -4,7 +4,7 @@ date: 2022-12-06
 katex: true
 ---
 
-Here I want to demonstrate how the [proposed nonlinear estimation algorithm]({{<ref "/content/posts/nonlinear_batch_estimation.md">}}) solves an example estimation problem.
+Here I want to demonstrate how the [proposed nonlinear estimation algorithm]({{<ref "/posts/nonlinear_batch_estimation.md">}}) solves an example estimation problem.
 
 # Model formulation
 
@@ -12,7 +12,7 @@ As a dynamic system for variable $y$ I consider a nonlinear damped oscillator wi
 $$
 \ddot{y} + 2 \eta \omega \dot{y} (1 + \xi \dot{y}^2) + \omega^2 \sin y = a
 $$
-The difference from the [linear model]({{<ref "/content/posts/verify_smoother/index.md#model-formulation">}}) are:
+The difference from the [linear model]({{<ref "/posts/verify_smoother/index.md#model-formulation">}}) are:
 
 * The returning force is changed from $y$ to $\sin y$ -- this can be viewed as abandoning the small angle approximation for a gravity pendulum
 * The friction force now nonlinear with an additional factor of $1 + \xi \dot{y}^2$ -- the friction increases for high speed
@@ -116,7 +116,7 @@ P_0^- = \begin{bmatrix}
 \end{bmatrix}
 $$
 
-The estimation is run over 1000 epochs with [tolerance parameters]({{<ref "/content/posts/nonlinear_batch_estimation.md#termination">}}) $t_c = t_f = 10^{-8}$ for the optimization.
+The estimation is run over 1000 epochs with [tolerance parameters]({{<ref "/posts/nonlinear_batch_estimation.md#termination">}}) $t_c = t_f = 10^{-8}$ for the optimization.
 
 # Algorithm's results
 
@@ -155,7 +155,7 @@ The estimated error standard deviations are depicted below.
 
 [![state](figs/sd.svg)](figs/sd.svg)
 
-We observe already known from the [linear case]({{<ref "/content/posts/verify_smoother/index.md#comparison-of-sample-RMS-and-estimated-SD">}}) relation between filter and smoother standard deviations.
+We observe already known from the [linear case]({{<ref "/posts/verify_smoother/index.md#comparison-of-sample-RMS-and-estimated-SD">}}) relation between filter and smoother standard deviations.
 
 Monte-Carlo simulation can and should be done to compare sample RMS and estimated SD of filter and optimization solutions.
 It won't be included in this post however.

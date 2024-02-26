@@ -4,7 +4,7 @@ date: 2023-01-05
 katex: true
 ---
 
-In [this post]({{<ref "/content/posts/rts_as_optimization.md">}}) (recommended to read beforehand) I've shown a derivation of the Kalman smoother as a solution to an optimization problem.
+In [this post]({{<ref "/posts/rts_as_optimization.md">}}) (recommended to read beforehand) I've shown a derivation of the Kalman smoother as a solution to an optimization problem.
 The resulting formulas are surprisingly elegant, however their applicability depends on the assumption that apriori filter covariance matrices $P_k^-$ are positive definite and invertible.
 This assumption might be limiting in practical problems and thus another form of the Kalman smoother is derived here.
 

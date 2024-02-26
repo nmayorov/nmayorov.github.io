@@ -4,7 +4,7 @@ date: 2023-08-03
 katex: true
 ---
 
-Here I compare properties of the [robust EKF update algorithm]({{<ref "/content/posts/robust_ekf/index.md">}}) with a classical outlier rejection approach based on normalized innovation checks.
+Here I compare properties of the [robust EKF update algorithm]({{<ref "/posts/robust_ekf">}}) with a classical outlier rejection approach based on normalized innovation checks.
 
 # Outlier rejection approach
 

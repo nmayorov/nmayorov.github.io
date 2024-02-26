@@ -4,7 +4,7 @@ date: 2022-11-29
 katex: true
 ---
 
-In the [previous post]({{<ref "/content/posts/rts_as_optimization.md">}}) I've derived formulas for a batch state estimation <<Kalman smoother>> algorithm.
+In the [previous post]({{<ref "/posts/rts_as_optimization.md">}}) I've derived formulas for a batch state estimation <<Kalman smoother>> algorithm.
 Here I want to provide a numerical verification of its correctness along with the classical Kalman filter algorithm.
 
 # Monte Carlo method
@@ -103,7 +103,7 @@ $$
 
 ## Model summary
 
-We have formulated a discrete time linear stochastic model in the [standard form]({{<ref "/content/posts/rts_as_optimization.md#problem-formulation">}}).
+We have formulated a discrete time linear stochastic model in the [standard form]({{<ref "/posts/rts_as_optimization.md#problem-formulation">}}).
 The required matrices have the following form for our problem (they don't depend on $k$).
 
 Prior mean:

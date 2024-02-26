@@ -5,7 +5,7 @@ katex: true
 ---
 
 It's generally known that the heading angle in Inertial Navigation Systems (INS) is observable when the system undergoes acceleration (including turns at nonzero velocity).
-However if we look at the ["modified error model"]({{<ref "/content/posts/ins_error_equations.md#modified-phi-vector-error-model">}}), 
+However if we look at the ["modified error model"]({{<ref "/posts/ins_error_equations.md#modified-phi-vector-error-model">}}), 
 it may seem that merely significantly nonzero constant velocity is sufficient.
 Here I want to figure out this subject using formal observability criteria and then give it intuitive physical explanation.
 

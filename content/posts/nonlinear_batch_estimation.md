@@ -9,7 +9,7 @@ In this note I present a development of nonlinear batch estimation algorithm.
 # Model description
 
 The state estimation problem in a nonlinear system is considered.
-The formulations is analogous to the [linear case]({{<ref "/content/posts/rts_as_optimization.md#problem-formulation">}}), but with nonlinear transition and measurement equations.
+The formulations is analogous to the [linear case]({{<ref "/posts/rts_as_optimization.md#problem-formulation">}}), but with nonlinear transition and measurement equations.
 We use uppercase letters to denote variables participating in the nonlinear model. 
 Time transition and measurement equations for which are
 $$
@@ -211,7 +211,7 @@ G_k = \left.\frac{\partial f(X, W)}{\partial W}\right\vert\_{\hat{X}_k, \hat{W}_
 u_k = f_k(\hat{X}_k, \hat{W}_k) - \hat{X}\_{k + 1}
 $$
 
-Solution $x_k$ and $w_k$ to it is found using the linear smoother algorithm summarized [here]({{<ref "/content/posts/rts_as_optimization.md#summary-of-the-algorithm">}}).
+Solution $x_k$ and $w_k$ to it is found using the linear smoother algorithm summarized [here]({{<ref "/posts/rts_as_optimization.md#summary-of-the-algorithm">}}).
 Then the estimates are updated as:
 $$
 \hat{X}_k \leftarrow \hat{X}_k + \alpha x_k \\\\

@@ -4,7 +4,7 @@ date: 2023-07-13
 katex: true
 ---
 
-When viewed as an [optimization problem]({{<ref "/content/posts/ekf_update_optimization.md">}}) the Extended Kalman Filter update step can be generalized to incorporate a robust loss function in order to protect against outlier measurements.
+When viewed as an [optimization problem]({{<ref "/posts/ekf_update_optimization.md">}}) the Extended Kalman Filter update step can be generalized to incorporate a robust loss function in order to protect against outlier measurements.
 In this note the initial theoretical development is given.
 
 # Introducing a robust loss function
@@ -200,6 +200,6 @@ The scaling formulas remain the same, only works with scalars.
 
 # Algorithm outline
 
-The robust Extended Kalman update step as an optimization procedure follows the same logic as described in the [previous post]({{<ref "/content/posts/ekf_update_optimization.md">}}).
+The robust Extended Kalman update step as an optimization procedure follows the same logic as described in the [previous post]({{<ref "/posts/ekf_update_optimization.md">}}).
 But on each iterations the residual vector $z$ and the measurement matrix $H$ are scaled to account for a robust loss function as described above.
 Because the optimization problem becomes more difficult and differs significantly from the standard EKF update, the iterations must be done with a line search step control until the convergence.
