@@ -82,8 +82,8 @@ $$
 
 Here we have that the actual motion of the robot is deterministic and the estimation equations are stochastic.
 This situation occurs when the noisy measurements are used in the estimate time propagation equations. 
-An important example is a strapdown Inertial Navigation System (INS), where noisy measurements of gyros and accelerometers are used to propagate the system state estimate (i. e. position, velocity and attitude).
-Our example in this section can be though of as a simplified INS.
+An important example is a strapdown Inertial Navigation System (INS), where noisy measurements of gyros and accelerometers are used to propagate the system state estimate (i.e. position, velocity and attitude).
+Our example in this section can be thought of as a simplified INS.
 
 # General treatment and consequences on estimation algorithms design
 
