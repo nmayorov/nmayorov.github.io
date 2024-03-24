@@ -41,9 +41,15 @@ params:
 
 menu:
   main:
+    - name: Open source
+      title: Open source
+      url: /open_source
+      weight: 1
     - name: All posts
       title: All posts
       url: archives
+      weight: 2
     - name: Tags
       title: Tags
       url: /tags
+      weight: 3
