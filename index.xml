@@ -1,19 +1,172 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Navigating Uncertainty</title><link>https://nmayorov.github.io/</link><description>Recent content on Navigating Uncertainty</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sun, 03 Mar 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://nmayorov.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Strapdown IMU synthesis</title><link>https://nmayorov.github.io/posts/imu_synthesis/</link><pubDate>Sun, 03 Mar 2024 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/imu_synthesis/</guid><description>Synthesis of strapdown Inertial Measurement Unit (IMU) readings is required for simulation of inertial navigation systems and related algorithms development. Here I want to describe the algorithm of IMU synthesis implemented in pyins, which is probably one of the most useful functions in the library.
-Problem formulation The task is to compute strapdown IMU readings from a time series of position and attitude. The following points define the algorithm requirements:</description></item><item><title>Robust Extended Kalman Filter update. Part 2: comparison with outlier rejection approach</title><link>https://nmayorov.github.io/posts/robust_ekf_vs_thresholds/</link><pubDate>Thu, 03 Aug 2023 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/robust_ekf_vs_thresholds/</guid><description>Here I compare properties of the robust EKF update algorithm with a classical outlier rejection approach based on normalized innovation checks.
-Outlier rejection approach A well known and efficient approach in Kalman filtering is analyzing whether normalized measurement innovations are reasonable. The innovation $$ e = z - H x^- $$ has theoretical covariance $$ S = H P^- H^T + R $$ The quadratic form $e^T S^{-1} e$ is expected to have a $\chi$-squared distribution and its excessively large values indicate a possible outlier, which should be rejected.</description></item><item><title>Robust Extended Kalman Filter update. Part 1: basic theory</title><link>https://nmayorov.github.io/posts/robust_ekf/</link><pubDate>Thu, 13 Jul 2023 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/robust_ekf/</guid><description>When viewed as an optimization problem the Extended Kalman Filter update step can be generalized to incorporate a robust loss function in order to protect against outlier measurements. In this note the initial theoretical development is given.
-Introducing a robust loss function In the standard EKF update cost function the measurement residuals appear squared, which is known to be not robust against outliers. We can alleviate this problem by wrapping the measurement residual part with a loss function $\rho$ as follows: $$ E(X) = \frac{1}{2} (X - X^-)^T (P^-)^{-1} (X - X^-) + \frac{1}{2} \rho\left( (h(X) - Z)^T R^{-1} (h(X) - Z) \right) $$ The function $\rho$ must be approximately linear for small arguments (to achieve optimality of Kalman update) and sublinear for large arguments (to be robust agains outlier measurements).</description></item><item><title>Extended Kalman Filter update step as an optimization problem</title><link>https://nmayorov.github.io/posts/ekf_update_optimization/</link><pubDate>Thu, 04 May 2023 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/ekf_update_optimization/</guid><description>The Extended Kalman Filter is classically built as an extension of the linear Kalman filter using system and measurement models linearization. In this regard the update step in EKF is naturally done in a single step. The iterated EKF aims to improve the linearization point by doing several update iterations and recomputing measurement Jacobian each time. It&amp;rsquo;s known to be connected with nonlinear optimization.
-In this note I want to derive possible EKF update strategies starting from the optimization viewpoint.</description></item><item><title>Heading observability in Inertial Navigation Systems</title><link>https://nmayorov.github.io/posts/ins_heading_observability/</link><pubDate>Sun, 02 Apr 2023 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/ins_heading_observability/</guid><description>It&amp;rsquo;s generally known that the heading angle in Inertial Navigation Systems (INS) is observable when the system undergoes acceleration (including turns at nonzero velocity). However if we look at the &amp;ldquo;modified error model&amp;rdquo;, it may seem that merely significantly nonzero constant velocity is sufficient. Here I want to figure out this subject using formal observability criteria and then give it intuitive physical explanation.
-INS equations in 2 dimensions To investigate heading observability, a simplified version of INS for a 2-dimensional motion is fully sufficient.</description></item><item><title>Implementation of Kalman correction formulas</title><link>https://nmayorov.github.io/posts/practical_kalman_correction/</link><pubDate>Thu, 12 Jan 2023 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/practical_kalman_correction/</guid><description>This is a short note on my view how to best implement Kalman correction formulas in a programing language.
-Basic formulas A vector measurement is linearly related to a state vector with an additive noise: $$ z = H x + v $$ Where $z$ and $H$ are a known vector and matrix and the noise vector $v$ has a known covariance matrix $R$. Thus the measurement model is defined by 3 elements &amp;ndash; $z, H, R$.</description></item><item><title>Alternative form of Kalman smoother</title><link>https://nmayorov.github.io/posts/smoother_alt_form/</link><pubDate>Thu, 05 Jan 2023 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/smoother_alt_form/</guid><description>In this post (recommended to read beforehand) I&amp;rsquo;ve shown a derivation of the Kalman smoother as a solution to an optimization problem. The resulting formulas are surprisingly elegant, however their applicability depends on the assumption that apriori filter covariance matrices $P_k^-$ are positive definite and invertible. This assumption might be limiting in practical problems and thus another form of the Kalman smoother is derived here.
-Motivating example A singular covariance matrix may arise in the following practical scenario.</description></item><item><title>INS error equations</title><link>https://nmayorov.github.io/posts/ins_error_equations/</link><pubDate>Tue, 20 Dec 2022 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/ins_error_equations/</guid><description>In this note I want to derive Inertial Navigation System (INS) error equations in concise and coherent fashion. This is of course a well known subject, however it&amp;rsquo;s useful to derive all the equations from scratch and revisit the subject from time to time.
-INS state variables and equations for them An Inertial Navigation System computes position, velocity and attitude of a moving object using gyro and accelerometer measurements from an Inertial Measurement Unit (IMU).</description></item><item><title>Noisy input in state time propagation: "control" vs. "navigation"</title><link>https://nmayorov.github.io/posts/time_propagation_noise/</link><pubDate>Sat, 10 Dec 2022 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/time_propagation_noise/</guid><description>In this note I want to show that there are two possible scenarios how noisy input can influence state time propagation in estimation problems. This is not well articulated in classical literature and may create confusion when applying estimation algorithms to practical systems.
-I will illustrate the concept on a simple example. Consider a robot which can move in the direction of its longitudinal axis and rotate. Its state is described by 4 variables (2D case):</description></item><item><title>Example of a nonlinear estimation problem solved by optimization</title><link>https://nmayorov.github.io/posts/nl_estimation_example/</link><pubDate>Tue, 06 Dec 2022 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/nl_estimation_example/</guid><description>Here I want to demonstrate how the proposed nonlinear estimation algorithm solves an example estimation problem.
-Model formulation As a dynamic system for variable $y$ I consider a nonlinear damped oscillator with an external force $a$: $$ \ddot{y} + 2 \eta \omega \dot{y} (1 + \xi \dot{y}^2) + \omega^2 \sin y = a $$ The difference from the linear model are:
-The returning force is changed from $y$ to $\sin y$ &amp;ndash; this can be viewed as abandoning the small angle approximation for a gravity pendulum The friction force now nonlinear with an additional factor of $1 + \xi \dot{y}^2$ &amp;ndash; the friction increases for high speed Introducing the variables $$ x_1 \coloneqq y \\ x_2 \coloneqq \dot{y} \\ $$ we rewrite it as a first order system $$ \dot{x_1} = x_2 \\ \dot{x_2} = -\omega^2 \sin x_1 - 2 \eta \omega x_2 (1 + \xi x_2^2) + a $$ Introduce discrete time variables $$ x_k \coloneqq x(k \tau) \\ a_k \coloneqq a(k \tau) $$ Applying the first-order integration method we get the following discrete time equation: $$ x_{k + 1} = f(x_k, a_k) \\ \text{with }f(x, a) = \begin{bmatrix} x_1 + \tau x_2 \\ x_2 - \tau (\omega^2 \sin x_1 + 2 \eta \omega x_2 (1 + \xi x_2^2) + a) \end{bmatrix} $$ Let&amp;rsquo;s introduce the noise sources into it:</description></item><item><title>Nonlinear batch estimation</title><link>https://nmayorov.github.io/posts/nonlinear_batch_estimation/</link><pubDate>Wed, 30 Nov 2022 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/nonlinear_batch_estimation/</guid><description>In this note I present a development of nonlinear batch estimation algorithm.
-Model description The state estimation problem in a nonlinear system is considered. The formulations is analogous to the linear case, but with nonlinear transition and measurement equations. We use uppercase letters to denote variables participating in the nonlinear model. Time transition and measurement equations for which are $$ X_{k+1} = f_k(X_k, W_k) \\ Z_k = h_k(X_k) + V_k $$ All the other assumptions remain the same.</description></item><item><title>Verification of Kalman filter and smoother algorithms</title><link>https://nmayorov.github.io/posts/verify_smoother/</link><pubDate>Tue, 29 Nov 2022 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/verify_smoother/</guid><description>In the previous post I&amp;rsquo;ve derived formulas for a batch state estimation &amp;laquo;Kalman smoother&amp;raquo; algorithm. Here I want to provide a numerical verification of its correctness along with the classical Kalman filter algorithm.
-Monte Carlo method The invaluable method of verification of estimation algorithms is Monte Carlo simulation:
-Generate a ground truth sequence of states and measurements according to the system model. It assumes generating process and measurement noises as pseudorandom numbers Run the estimation algorithm and compute its estimation errors as $\Delta x_k = \hat{x}_k - x_k$, where $\hat{x}_k$ and $x_k$ are the estimated and true state respectively at epoch $k$ Repeat steps 1 and 2 many times and compute sample mean and covariance of the errors $\Delta x_k$ for each epoch $k$ The sample mean must be close to zero and the sample covariance must match the covariance estimated by the algorithm.</description></item><item><title>Derivation of Kalman smoother from an optimization perspective</title><link>https://nmayorov.github.io/posts/rts_as_optimization/</link><pubDate>Sun, 27 Nov 2022 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/rts_as_optimization/</guid><description>In this post Kalman smoother formulas are derived as a solution to an optimization problem.
-Problem formulation We consider an estimation problem for a discrete time linear stochastic system: $$ \begin{gather*} x_{k+1} = F_k x_k + G_k w_k \\ z_k = H_k x_k + v_k \\ \operatorname{E} x_0 = x_0^- \\ \operatorname{E} (x - x_0^-) (x - x_0^-)^T = P_0^- \succ 0 \\ \operatorname{E} w_k = 0 \\ \operatorname{E} w_k w_k^T = Q_k \succ 0 \\ \operatorname{E} v_k = 0 \\ \operatorname{E} v_k v_k^T = R_k \succ 0 \\ \operatorname{E} w_i w_j^T = 0 \text{ for } i \neq j \\ \operatorname{E} v_i v_j^T = 0 \text{ for } i \neq j \\ \operatorname{E} w_i v_j^T = 0 \\ \end{gather*} $$</description></item><item><title>Open source projects</title><link>https://nmayorov.github.io/open_source/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/open_source/</guid><description>Here are Python open source packages I&amp;rsquo;ve implemented with somewhat decent quality and usefulness.
-pyins Implementation of basic concepts and algorithms in aided Inertial Navigation Systems. Can be useful for studying INS and estimation in general, algorithm prototyping or performance evaluation.
-allan-variance Tiny package for computation of Allan variance and automatic noise parameter estimation from it. Can be used for real data analysis like evaluation of inertial sensors.
-dyne A collection of estimation algorithms for discrete-time dynamic systems.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Navigating Uncertainty</title><link>https://nmayorov.github.io/</link><description>Recent content on Navigating Uncertainty</description><generator>Hugo -- 0.140.1</generator><language>en-us</language><lastBuildDate>Fri, 20 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://nmayorov.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>Rigorous consideration of noisy control input in Kalman filter state propagation</title><link>https://nmayorov.github.io/posts/noisy_control_derivation/</link><pubDate>Fri, 20 Dec 2024 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/noisy_control_derivation/</guid><description>&lt;p>In a &lt;a href="https://nmayorov.github.io/posts/time_propagation_noise/">previous post&lt;/a> I&amp;rsquo;ve considered an intuitive engineering approach of handling noisy control input signals in Extended Kalman Filters.
+Here I want to develop a more rigorous view to this approach.&lt;/p>
+&lt;h1 id="problem-formulation">Problem formulation&lt;/h1>
+&lt;p>Let&amp;rsquo;s consider a linear state transition equation for $x_k$ of the form:
+$$
+x_{k + 1} = F_k x_k + B_k u_k,
+$$
+where $u_k$ is the deterministic sequence of control vectors.
+Initial distribution of $x$ is given as normal:
+$$
+x_0 \sim \mathcal{N}(\hat{x}_0, P_0)
+$$&lt;/p></description></item><item><title>Strapdown IMU synthesis</title><link>https://nmayorov.github.io/posts/imu_synthesis/</link><pubDate>Sun, 03 Mar 2024 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/imu_synthesis/</guid><description>&lt;p>Synthesis of strapdown Inertial Measurement Unit (IMU) readings is required for simulation of inertial navigation systems and related algorithms development.
+Here I want to describe the algorithm of IMU synthesis implemented in &lt;a href="github.com/nmayorov/pyins">pyins&lt;/a>, which is probably one of the most useful functions in the library.&lt;/p>
+&lt;h1 id="problem-formulation">Problem formulation&lt;/h1>
+&lt;p>The task is to compute strapdown IMU readings from a time series of position and attitude.
+The following points define the algorithm requirements:&lt;/p>
+&lt;ul>
+&lt;li>Data is provided at known time points $t_k$, not necessary equispaced&lt;/li>
+&lt;li>Position is given as a time series of latitude, longitude and altitude &amp;ndash; $\varphi(t_k), \lambda(t_k), h(t_k)$&lt;/li>
+&lt;li>Attitude is given as a time series of roll, pitch and heading angles &amp;ndash; $\gamma(t_k), \theta(t_k), \psi(t_k)$&lt;/li>
+&lt;li>The algorithm must account for Earth rotation and ellipticity and use realistic gravity model&lt;/li>
+&lt;li>The algorithm must be able to compute rate and increment (integral) readings&lt;/li>
+&lt;/ul>
+&lt;h1 id="preliminarily-considerations">Preliminarily considerations&lt;/h1>
+&lt;p>We want to generate IMU from sampled trajectory points instead of some predefined continuous functions to have more flexibility and convenience.
+Figuring out and implementing appropriate continuous functions for position and attitude is difficult task on its own, which is better to be avoided.&lt;/p></description></item><item><title>Robust Extended Kalman Filter update. Part 2: comparison with outlier rejection approach</title><link>https://nmayorov.github.io/posts/robust_ekf_vs_thresholds/</link><pubDate>Thu, 03 Aug 2023 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/robust_ekf_vs_thresholds/</guid><description>&lt;p>Here I compare properties of the &lt;a href="https://nmayorov.github.io/posts/robust_ekf/">robust EKF update algorithm&lt;/a> with a classical outlier rejection approach based on normalized innovation checks.&lt;/p>
+&lt;h1 id="outlier-rejection-approach">Outlier rejection approach&lt;/h1>
+&lt;p>A well known and efficient approach in Kalman filtering is analyzing whether normalized measurement innovations are reasonable.
+The innovation
+$$
+e = z - H x^-
+$$
+has theoretical covariance
+$$
+S = H P^- H^T + R
+$$
+The quadratic form $e^T S^{-1} e$ is expected to have a $\chi$-squared distribution and its excessively large values indicate a possible outlier, which should be rejected.
+For scalar measurements it is equivalent to rejection measurements when the innovation is larger than (for example) 3$\sigma$ with $\sigma = \sqrt{S}$.&lt;/p></description></item><item><title>Robust Extended Kalman Filter update. Part 1: basic theory</title><link>https://nmayorov.github.io/posts/robust_ekf/</link><pubDate>Thu, 13 Jul 2023 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/robust_ekf/</guid><description>&lt;p>When viewed as an &lt;a href="https://nmayorov.github.io/posts/ekf_update_optimization/">optimization problem&lt;/a> the Extended Kalman Filter update step can be generalized to incorporate a robust loss function in order to protect against outlier measurements.
+In this note the initial theoretical development is given.&lt;/p>
+&lt;h1 id="introducing-a-robust-loss-function">Introducing a robust loss function&lt;/h1>
+&lt;p>In the standard EKF update cost function the measurement residuals appear squared, which is known to be not robust against outliers.
+We can alleviate this problem by wrapping the measurement residual part with a loss function $\rho$ as follows:
+$$
+E(X) = \frac{1}{2} (X - X^-)^T (P^-)^{-1} (X - X^-) + \frac{1}{2} \rho\left( (h(X) - Z)^T R^{-1} (h(X) - Z) \right)
+$$
+The function $\rho$ must be approximately linear for small arguments (to achieve optimality of Kalman update) and sublinear for large arguments (to be robust agains outlier measurements).
+Let&amp;rsquo;s state its properties formally:&lt;/p></description></item><item><title>Extended Kalman Filter update step as an optimization problem</title><link>https://nmayorov.github.io/posts/ekf_update_optimization/</link><pubDate>Thu, 04 May 2023 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/ekf_update_optimization/</guid><description>&lt;p>The Extended Kalman Filter is classically built as an extension of the linear Kalman filter using system and measurement models linearization.
+In this regard the update step in EKF is naturally done in a single step.
+The iterated EKF aims to improve the linearization point by doing several update iterations and recomputing measurement Jacobian each time.
+It&amp;rsquo;s known to be connected with nonlinear optimization.&lt;/p>
+&lt;p>In this note I want to derive possible EKF update strategies starting from the optimization viewpoint.&lt;/p></description></item><item><title>Heading observability in Inertial Navigation Systems</title><link>https://nmayorov.github.io/posts/ins_heading_observability/</link><pubDate>Sun, 02 Apr 2023 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/ins_heading_observability/</guid><description>&lt;p>It&amp;rsquo;s generally known that the heading angle in Inertial Navigation Systems (INS) is observable when the system undergoes acceleration (including turns at nonzero velocity).
+However if we look at the &lt;a href="https://nmayorov.github.io/posts/ins_error_equations/#modified-phi-vector-error-model">&amp;ldquo;modified error model&amp;rdquo;&lt;/a>,
+it may seem that merely significantly nonzero constant velocity is sufficient.
+Here I want to figure out this subject using formal observability criteria and then give it intuitive physical explanation.&lt;/p>
+&lt;h1 id="ins-equations-in-2-dimensions">INS equations in 2 dimensions&lt;/h1>
+&lt;p>To investigate heading observability, a simplified version of INS for a 2-dimensional motion is fully sufficient.
+The state is described relative to the world frame $n$ by 5 variables:&lt;/p></description></item><item><title>Implementation of Kalman correction formulas</title><link>https://nmayorov.github.io/posts/practical_kalman_correction/</link><pubDate>Thu, 12 Jan 2023 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/practical_kalman_correction/</guid><description>&lt;p>This is a short note on my view how to best implement Kalman correction formulas in a programing language.&lt;/p>
+&lt;h1 id="basic-formulas">Basic formulas&lt;/h1>
+&lt;p>A vector measurement is linearly related to a state vector with an additive noise:
+$$
+z = H x + v
+$$
+Where $z$ and $H$ are a known vector and matrix and the noise vector $v$ has a known covariance matrix $R$.
+Thus the measurement model is defined by 3 elements &amp;ndash; $z, H, R$.&lt;/p></description></item><item><title>Alternative form of Kalman smoother</title><link>https://nmayorov.github.io/posts/smoother_alt_form/</link><pubDate>Thu, 05 Jan 2023 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/smoother_alt_form/</guid><description>&lt;p>In &lt;a href="https://nmayorov.github.io/posts/rts_as_optimization/">this post&lt;/a> (recommended to read beforehand) I&amp;rsquo;ve shown a derivation of the Kalman smoother as a solution to an optimization problem.
+The resulting formulas are surprisingly elegant, however their applicability depends on the assumption that apriori filter covariance matrices $P_k^-$ are positive definite and invertible.
+This assumption might be limiting in practical problems and thus another form of the Kalman smoother is derived here.&lt;/p>
+&lt;h1 id="motivating-example">Motivating example&lt;/h1>
+&lt;p>A singular covariance matrix may arise in the following practical scenario.
+Imagine that we want to process measurements which relate states at the current and previous epochs &amp;ndash; $x_k$ and $x_{k-1}$.
+A possible example might be processing of distance increments from an odometeter in a navigation algorithm.
+Such measurements are not directly supported by Kalman filter or smoother algorithms.
+However we can cast them into the Kalman framework by considering an augmented vector
+$$
+x^a_{k + 1} = \begin{bmatrix}
+x_{k + 1} \\
+x_k
+\end{bmatrix}
+$$
+The approach is also known as &amp;laquo;stochastic cloning&amp;raquo;.&lt;/p></description></item><item><title>INS error equations</title><link>https://nmayorov.github.io/posts/ins_error_equations/</link><pubDate>Tue, 20 Dec 2022 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/ins_error_equations/</guid><description>&lt;p>In this note I want to derive Inertial Navigation System (INS) error equations in concise and coherent fashion.
+This is of course a well known subject, however it&amp;rsquo;s useful to derive all the equations from scratch and revisit the subject from time to time.&lt;/p>
+&lt;h1 id="ins-state-variables-and-equations-for-them">INS state variables and equations for them&lt;/h1>
+&lt;p>An Inertial Navigation System computes position, velocity and attitude of a moving object using gyro and accelerometer measurements from an Inertial Measurement Unit (IMU).&lt;/p></description></item><item><title>Noisy input in state time propagation: "control" vs. "navigation"</title><link>https://nmayorov.github.io/posts/time_propagation_noise/</link><pubDate>Sat, 10 Dec 2022 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/time_propagation_noise/</guid><description>&lt;p>In this note I want to show that there are two possible scenarios how noisy input can influence state time propagation in estimation problems.
+This is not well articulated in classical literature and may create confusion when applying estimation algorithms to practical systems.&lt;/p>
+&lt;p>I will illustrate the concept on a simple example.
+Consider a robot which can move in the direction of its longitudinal axis and rotate.
+Its state is described by 4 variables (2D case):&lt;/p></description></item><item><title>Example of a nonlinear estimation problem solved by optimization</title><link>https://nmayorov.github.io/posts/nl_estimation_example/</link><pubDate>Tue, 06 Dec 2022 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/nl_estimation_example/</guid><description>&lt;p>Here I want to demonstrate how the &lt;a href="https://nmayorov.github.io/posts/nonlinear_batch_estimation/">proposed nonlinear estimation algorithm&lt;/a> solves an example estimation problem.&lt;/p>
+&lt;h1 id="model-formulation">Model formulation&lt;/h1>
+&lt;p>As a dynamic system for variable $y$ I consider a nonlinear damped oscillator with an external force $a$:
+$$
+\ddot{y} + 2 \eta \omega \dot{y} (1 + \xi \dot{y}^2) + \omega^2 \sin y = a
+$$
+The difference from the &lt;a href="https://nmayorov.github.io/posts/verify_smoother/#model-formulation">linear model&lt;/a> are:&lt;/p>
+&lt;ul>
+&lt;li>The returning force is changed from $y$ to $\sin y$ &amp;ndash; this can be viewed as abandoning the small angle approximation for a gravity pendulum&lt;/li>
+&lt;li>The friction force now nonlinear with an additional factor of $1 + \xi \dot{y}^2$ &amp;ndash; the friction increases for high speed&lt;/li>
+&lt;/ul>
+&lt;p>Introducing the variables
+$$
+x_1 \coloneqq y \\
+x_2 \coloneqq \dot{y} \\
+$$
+we rewrite it as a first order system
+$$
+\dot{x_1} = x_2 \\
+\dot{x_2} = -\omega^2 \sin x_1 - 2 \eta \omega x_2 (1 + \xi x_2^2) + a
+$$
+Introduce discrete time variables
+$$
+x_k \coloneqq x(k \tau) \\
+a_k \coloneqq a(k \tau)
+$$
+Applying the first-order integration method we get the following discrete time equation:
+$$
+x_{k + 1} = f(x_k, a_k) \\
+\text{with }f(x, a) = \begin{bmatrix}
+x_1 + \tau x_2 \\
+x_2 - \tau (\omega^2 \sin x_1 + 2 \eta \omega x_2 (1 + \xi x_2^2) + a)
+\end{bmatrix}
+$$
+Let&amp;rsquo;s introduce the noise sources into it:&lt;/p></description></item><item><title>Nonlinear batch estimation</title><link>https://nmayorov.github.io/posts/nonlinear_batch_estimation/</link><pubDate>Wed, 30 Nov 2022 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/nonlinear_batch_estimation/</guid><description>&lt;p>In this note I present a development of nonlinear batch estimation algorithm.&lt;/p>
+&lt;h1 id="model-description">Model description&lt;/h1>
+&lt;p>The state estimation problem in a nonlinear system is considered.
+The formulations is analogous to the &lt;a href="https://nmayorov.github.io/posts/rts_as_optimization/#problem-formulation">linear case&lt;/a>, but with nonlinear transition and measurement equations.
+We use uppercase letters to denote variables participating in the nonlinear model.
+Time transition and measurement equations for which are
+$$
+X_{k+1} = f_k(X_k, W_k) \\
+Z_k = h_k(X_k) + V_k
+$$
+All the other assumptions remain the same.
+The task is to estimate $X_k$ for epochs $k = 0, 1, \ldots, N$.
+This will be done by solving an optimization problem.&lt;/p></description></item><item><title>Verification of Kalman filter and smoother algorithms</title><link>https://nmayorov.github.io/posts/verify_smoother/</link><pubDate>Tue, 29 Nov 2022 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/verify_smoother/</guid><description>&lt;p>In the &lt;a href="https://nmayorov.github.io/posts/rts_as_optimization/">previous post&lt;/a> I&amp;rsquo;ve derived formulas for a batch state estimation &amp;laquo;Kalman smoother&amp;raquo; algorithm.
+Here I want to provide a numerical verification of its correctness along with the classical Kalman filter algorithm.&lt;/p>
+&lt;h1 id="monte-carlo-method">Monte Carlo method&lt;/h1>
+&lt;p>The invaluable method of verification of estimation algorithms is Monte Carlo simulation:&lt;/p>
+&lt;ol>
+&lt;li>Generate a ground truth sequence of states and measurements according to the system model.
+It assumes generating process and measurement noises as pseudorandom numbers&lt;/li>
+&lt;li>Run the estimation algorithm and compute its estimation errors as $\Delta x_k = \hat{x}_k - x_k$,
+where $\hat{x}_k$ and $x_k$ are the estimated and true state respectively at epoch $k$&lt;/li>
+&lt;li>Repeat steps 1 and 2 many times and compute sample mean and covariance of the errors $\Delta x_k$ for each epoch $k$&lt;/li>
+&lt;/ol>
+&lt;p>The sample mean must be close to zero and the sample covariance must match the covariance estimated by the algorithm.
+Alternatively sample root mean squared errors (as $\sqrt{\operatorname{E} [\Delta x_k]_i^2}$) can be compared with standard deviations provided by the estimation algorithm.
+This will check mean and covariance correctness simultaneously and this is the approach I usually use.&lt;/p></description></item><item><title>Derivation of Kalman smoother from an optimization perspective</title><link>https://nmayorov.github.io/posts/rts_as_optimization/</link><pubDate>Sun, 27 Nov 2022 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/posts/rts_as_optimization/</guid><description>&lt;p>In this post Kalman smoother formulas are derived as a solution to an optimization problem.&lt;/p>
+&lt;h1 id="problem-formulation">Problem formulation&lt;/h1>
+&lt;p>We consider an estimation problem for a discrete time linear stochastic system:
+$$
+\begin{gather*}
+x_{k+1} = F_k x_k + G_k w_k \\
+z_k = H_k x_k + v_k \\
+\operatorname{E} x_0 = x_0^- \\
+\operatorname{E} (x - x_0^-) (x - x_0^-)^T = P_0^- \succ 0 \\
+\operatorname{E} w_k = 0 \\
+\operatorname{E} w_k w_k^T = Q_k \succ 0 \\
+\operatorname{E} v_k = 0 \\
+\operatorname{E} v_k v_k^T = R_k \succ 0 \\
+\operatorname{E} w_i w_j^T = 0 \text{ for } i \neq j \\
+\operatorname{E} v_i v_j^T = 0 \text{ for } i \neq j \\
+\operatorname{E} w_i v_j^T = 0 \\
+\end{gather*}
+$$&lt;/p></description></item><item><title>Open source projects</title><link>https://nmayorov.github.io/open_source/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://nmayorov.github.io/open_source/</guid><description>&lt;p>Here are Python open source packages I&amp;rsquo;ve implemented with somewhat decent quality and usefulness.&lt;/p>
+&lt;h3 id="pyinshttpsgithubcomnmayorovpyins">&lt;a href="https://github.com/nmayorov/pyins">pyins&lt;/a>&lt;/h3>
+&lt;p>Implementation of basic concepts and algorithms in aided Inertial Navigation Systems.
+Can be useful for studying INS and estimation in general, algorithm prototyping or performance evaluation.&lt;/p>
+&lt;h3 id="allan-variancehttpsgithubcomnmayorovallan-variance">&lt;a href="https://github.com/nmayorov/allan-variance">allan-variance&lt;/a>&lt;/h3>
+&lt;p>Tiny package for computation of Allan variance and automatic noise parameter estimation from it.
+Can be used for real data analysis like evaluation of inertial sensors.&lt;/p>
+&lt;h3 id="dynehttpsgithubcomnmayorovdyne">&lt;a href="https://github.com/nmayorov/dyne">dyne&lt;/a>&lt;/h3>
+&lt;p>A collection of estimation algorithms for discrete-time dynamic systems.
+The idea is to have a playground library where estimation algorithms can be easily implemented and tested thanks to the simplicity of problem formulation and flexibility of Python.
+Currently contains standard (like EKF) as well as more interesting and experimental algorithms (like nonlinear batch optimization).&lt;/p></description></item></channel></rss>
