@@ -17,14 +17,14 @@ $$
 \mathcal{N}(\xi; m, P) = \frac{1}{(2 \pi)^{n/2} |P|^{1/2}} \exp \left[ -\frac{1}{2} (\xi - m)^T P^{-1} (\xi - m) \right]
 $$
 
-The Gaussian mixture probability density is defined as a weighted sum of such functions:
+The Gaussian mixture probability density is defined as a weighted sum of normal probability densities:
 $$
 \mathcal{M}(\xi; w, m, P) = \sum_{i = 1}^N w^{(i)} \mathcal{N}(\xi; m^{(i)}, P^{(i)}), \\\\
 \text{with } w^{(i)} > 0 \text{ and } \sum_{i = 1}^N w^{(i)} = 1
 $$
-Here $w, m, P$ denote a set of $N$ parameters.
+Here $w, m, P$ denote sets of $N$ parameters.
 
-A sampling from such distribution is done in the following way:
+Sampling from such distribution can be done in the following way:
 
 1. Randomly select from which component to generate a sample with probabilities equal to $w^{(i)}$
 2. Generate a sample using a normal distribution of the selected component
@@ -65,7 +65,7 @@ We will also use two basic properties of a characteristic function:
    $$
    \overline{f}_y(\alpha) = \overline{f}_x(A^T \alpha)
    $$
-   It follows directly from definition.
+   It follows directly from the definition.
 
 # Operations on Gaussian mixture variables
 
@@ -161,7 +161,7 @@ $$
 x_k \sim \mathcal{M}(w_k, m_k, P_k) \\\\
 x_{k + 1} = F_k x_k + n_k, 
 $$
-Considering that $w_k$ is independent of $x_k$ and applying derived formulas for Gaussian mixture variable transformations we get:
+Considering that $n_k$ is independent of $x_k$ and applying derived formulas for Gaussian mixture variable transformations we get:
 $$
 w_{k + 1} = w_k \\\\
 m_{k + 1}^{(i)} = F_k m_k^{(i)} \\\\
