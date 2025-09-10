@@ -18,7 +18,7 @@ $$
 $$
 The Gaussian mixture probability density is defined as a weighted sum of such functions:
 $$
-\mathcal{N}(x; w, m, P) = \sum_{i = 1}^N w^{(i)} N(x; m^{(i)}, P^{(i)}), \\\\
+\mathcal{M}(x; w, m, P) = \sum_{i = 1}^N w^{(i)} \mathcal{N}(x; m^{(i)}, P^{(i)}), \\\\
 \text{with } w^{(i)} > 0 \text{ and } \sum_{i = 1}^N w^{(i)} = 1
 $$
 Here $w, m, P$ denote a set of $N$ parameters.
@@ -156,9 +156,9 @@ Now let's derive formulas for prediction and update phases of the filter.
 The prediction step propagates distribution parameters from epoch $k$ to $k + 1$:
 $$
 x_k \sim \mathcal{M}(w_k, m_k, P_k) \\\\
-x_{k + 1} = F_k x_k + n_k, n_k \sim \mathcal{N}(0, Q_k)
+x_{k + 1} = F_k x_k + n_k, 
 $$
-Considering that $n_k$ is independent of $x_k$ and applying derived formulas for Gaussian mixture variable transformations we get:
+Considering that $w_k$ is independent of $x_k$ and applying derived formulas for Gaussian mixture variable transformations we get:
 $$
 w_{k + 1} = w_k \\\\
 m_{k + 1}^{(i)} = F_k m_k^{(i)} \\\\
