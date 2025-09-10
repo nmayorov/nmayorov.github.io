@@ -14,11 +14,12 @@ Conceptually it will be very similar to classical Kalman filter.
 
 First define a multivariate normal probability density function with parameters of mean $m$ and covariance matrix $P$:
 $$
-\mathcal{N}(x; m, P) = \frac{1}{(2 \pi)^{n/2} |P|^{1/2}} \exp \left[ -\frac{1}{2} (x - m)^T P^{-1} (x - m) \right]
+\mathcal{N}(\xi; m, P) = \frac{1}{(2 \pi)^{n/2} |P|^{1/2}} \exp \left[ -\frac{1}{2} (\xi - m)^T P^{-1} (\xi - m) \right]
 $$
+
 The Gaussian mixture probability density is defined as a weighted sum of such functions:
 $$
-\mathcal{M}(x; w, m, P) = \sum_{i = 1}^N w^{(i)} \mathcal{N}(x; m^{(i)}, P^{(i)}), \\\\
+\mathcal{M}(\xi; w, m, P) = \sum_{i = 1}^N w^{(i)} \mathcal{N}(\xi; m^{(i)}, P^{(i)}), \\\\
 \text{with } w^{(i)} > 0 \text{ and } \sum_{i = 1}^N w^{(i)} = 1
 $$
 Here $w, m, P$ denote a set of $N$ parameters.
@@ -29,6 +30,8 @@ A sampling from such distribution is done in the following way:
 2. Generate a sample using a normal distribution of the selected component
 
 The Gaussian mixture should not be confused in any way with sum of normal variables.
+
+Probability density function notation will also be used like $x \sim \mathcal{N}(m, P)$, which means that $x$ has the corresponding density function --- $f_x(\xi) = \mathcal{N}(\xi; m, P)$.
 
 # Characteristic functions
 
