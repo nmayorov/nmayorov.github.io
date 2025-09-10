@@ -6,17 +6,17 @@ katex: true
 
 Gaussian mixture state representation seems like a powerful approach, which can work as a useful generalization of unimodal Gaussian representation.
 However, its coverage in literature is scarce and unsatisfactory, not to say confusing.
-It makes sense to start building understanding from the a, but fundamental problem --- estimation in linear systems.
+It makes sense to start building understanding from a basic, but fundamental problem --- estimation in linear systems.
 Here a linear filter which estimates parameters of Gaussian mixture probability density is rigorously developed.
 Conceptually it will be very similar to classical Kalman filter.
 
 # Notation and definitions
 
-First define a multivariate normal probability density function with parameters of mean $\mu$ and covariance matrix $P$:
+First define a multivariate normal probability density function with parameters of mean $m$ and covariance matrix $P$:
 $$
 \mathcal{N}(x; m, P) = \frac{1}{(2 \pi)^{n/2} |P|^{1/2}} \exp \left[ -\frac{1}{2} (x - m)^T P^{-1} (x - m) \right]
 $$
-The Gaussian mixture is defined as a weighted sum of such functions:
+The Gaussian mixture probability density is defined as a weighted sum of such functions:
 $$
 \mathcal{N}(x; w, m, P) = \sum_{i = 1}^N w^{(i)} N(x; m^{(i)}, P^{(i)}), \\\\
 \text{with } w^{(i)} > 0 \text{ and } \sum_{i = 1}^N w^{(i)} = 1
@@ -25,14 +25,14 @@ Here $w, m, P$ denote a set of $N$ parameters.
 
 A sampling from such distribution is done in the following way:
 
-1. Randomly select from which component to generate a sample with probabilities equal to weights $w^{(i)}$
+1. Randomly select from which component to generate a sample with probabilities equal to $w^{(i)}$
 2. Generate a sample using a normal distribution of the selected component
 
 The Gaussian mixture should not be confused in any way with sum of normal variables.
 
 # Characteristic functions
 
-A characteristic function of a random variable $x$ with probability density $f_x(\xi)$ is defined as the following expectation ($j$ is a imaginary unit):
+A characteristic function of a random variable $x$ with probability density $f_x(\xi)$ is defined as the following expectation ($j$ is an imaginary unit):
 $$
 \overline{f}_x(\alpha) = \mathrm{\mathbb{E}}_x e^{j \alpha^T x} = \int f_x(\xi) e^{j \alpha^T \xi} d \xi
 $$
@@ -78,24 +78,24 @@ $$
 \overline{f}_z(\alpha) = \overline{\mathcal{M}}(\alpha; w_x, m_x, P_x) \overline{\mathcal{N}}(\alpha; m_y, P_y) = \sum\_{i = 1}^N w^{(i)} \exp \left(j \alpha^T m_x^{(i)} - \frac{1}{2} \alpha^T P_x^{(i)} \alpha \right) \exp \left(j \alpha^T m_y - \frac{1}{2} \alpha^T P_y \alpha \right) = \\\\ = \sum\_{i = 1}^N w^{(i)} \exp \left(j \alpha^T (m_x^{(i)} + m_y) - \frac{1}{2} \alpha^T (P_x^{(i)} + P_y) \alpha \right) = \overline{\mathcal{M}}(\alpha; w_x, m_x + m_y, P_x + P_y)
 \end{split}
 $$
-We can identify that $z$ has characteristic function of a Gaussian mixture and thus (the notation assumes that each element of the parameter set is modified):
+We can identify that $z$ has the characteristic function of a Gaussian mixture and thus (the notation assumes that each element of the parameter set is modified):
 $$
-z \sim M(w_x, m_x + m_y, P_x + P_y)
+z \sim \mathcal{M}(w_x, m_x + m_y, P_x + P_y)
 $$
 In other words, the mixture weights don't change and parameters of individual components are changed by the usual rules for mean and variance of a sum.
 
 Now consider how a Gaussian mixture variable changes under a linear transform:
 $$
-x \sim M(w_x, m_x, P_x) \\\\
+x \sim \mathcal{M}(w_x, m_x, P_x) \\\\
 y = A x
 $$
-By using the linear transform rule of characteristic function we get (with the same simplified notation):
+By using the linear transform rule of a characteristic function we get (with the same simplified notation):
 $$
 \overline{f}_y(\alpha) = \overline{\mathcal{M}}(A^T \alpha; w_x, m_x, P_x) = \overline{\mathcal{M}}(\alpha; w_x, A m_x, A P_x A^T)
 $$
 We see, that $y$ is a Gaussian mixture variable with the following parameters:
 $$
-y \sim M(w_x, A m_x, A P_x A^T)
+y \sim \mathcal{M}(w_x, A m_x, A P_x A^T)
 $$
 In other words, the mixture weights don't change and parameters of individual components are transformed in the usual way.
 
@@ -139,7 +139,7 @@ $$
 Now we have everything setup to derive a linear Gaussian mixture filter.
 The filter will estimate probability density function of a vector $x$ given the following transition and measurement equations:
 $$
-x_{k + 1} = F_k x_k + w_k, w_k \sim \mathcal{N}(0, Q_k) \\\\
+x_{k + 1} = F_k x_k + m_k, n_k \sim \mathcal{N}(0, Q_k) \\\\
 z_k = H_k x_k + v_k, v_k \sim \mathcal{N}(0, R_k)
 $$
 But as opposed to Kalman filter the initial distribution is a Gaussian mixture:
@@ -156,9 +156,9 @@ Now let's derive formulas for prediction and update phases of the filter.
 The prediction step propagates distribution parameters from epoch $k$ to $k + 1$:
 $$
 x_k \sim \mathcal{M}(w_k, m_k, P_k) \\\\
-x_{k + 1} = F_k x_k + w_k
+x_{k + 1} = F_k x_k + n_k, n_k \sim \mathcal{N}(0, Q_k)
 $$
-Considering that $w_k$ is independent of $x_k$ and applying derived formulas for Gaussian mixture variable transformations we get:
+Considering that $n_k$ is independent of $x_k$ and applying derived formulas for Gaussian mixture variable transformations we get:
 $$
 w_{k + 1} = w_k \\\\
 m_{k + 1}^{(i)} = F_k m_k^{(i)} \\\\
