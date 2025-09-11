@@ -31,13 +31,13 @@ Sampling from such distribution can be done in the following way:
 
 The Gaussian mixture should not be confused in any way with sum of normal variables.
 
-Probability density function notation will also be used like $x \sim \mathcal{N}(m, P)$, which means that $x$ has the corresponding density function --- $f_x(\xi) = \mathcal{N}(\xi; m, P)$.
+Probability density function notation will also be used like $x \sim \mathcal{N}(m, P)$, which means that $x$ has the corresponding density function --- $p_x(\xi) = \mathcal{N}(\xi; m, P)$.
 
 # Characteristic functions
 
-A characteristic function of a random variable $x$ with probability density $f_x(\xi)$ is defined as the following expectation ($j$ is an imaginary unit):
+A characteristic function of a random variable $x$ with probability density $p_x(\xi)$ is defined as the following expectation ($j$ is an imaginary unit):
 $$
-\overline{f}_x(\alpha) = \mathrm{\mathbb{E}}_x e^{j \alpha^T x} = \int f_x(\xi) e^{j \alpha^T \xi} d \xi
+\overline{p}_x(\alpha) = \mathrm{\mathbb{E}}_x e^{j \alpha^T x} = \int p_x(\xi) e^{j \alpha^T \xi} d \xi
 $$
 
 Because this transform is similar to Fourier, there exists a one-to-one mapping between probability density and characteristic functions.
@@ -58,12 +58,12 @@ We will also use two basic properties of a characteristic function:
 
 1. Characteristic function of sum of two independent random variables $z = x + y$:
    $$
-   \overline{f}_z(\alpha) = \overline{f}_x(\alpha) \overline{f}_y(\alpha)
+   \overline{p}_z(\alpha) = \overline{p}_x(\alpha) \overline{p}_y(\alpha)
    $$
    It follows from the factorization property of exponent and ability to split the integral into independent parts.
 2. Characteristic function of linearly transformed random variable $y = A x$:
    $$
-   \overline{f}_y(\alpha) = \overline{f}_x(A^T \alpha)
+   \overline{p}_y(\alpha) = \overline{p}_x(A^T \alpha)
    $$
    It follows directly from the definition.
 
@@ -78,7 +78,7 @@ $$
 By using the sum property of characteristic functions we get:
 $$
 \begin{split}
-\overline{f}_z(\alpha) = \overline{\mathcal{M}}(\alpha; w_x, m_x, P_x) \overline{\mathcal{N}}(\alpha; m_y, P_y) = \sum\_{i = 1}^N w^{(i)} \exp \left(j \alpha^T m_x^{(i)} - \frac{1}{2} \alpha^T P_x^{(i)} \alpha \right) \exp \left(j \alpha^T m_y - \frac{1}{2} \alpha^T P_y \alpha \right) = \\\\ = \sum\_{i = 1}^N w^{(i)} \exp \left(j \alpha^T (m_x^{(i)} + m_y) - \frac{1}{2} \alpha^T (P_x^{(i)} + P_y) \alpha \right) = \overline{\mathcal{M}}(\alpha; w_x, m_x + m_y, P_x + P_y)
+\overline{p}_z(\alpha) = \overline{\mathcal{M}}(\alpha; w_x, m_x, P_x) \overline{\mathcal{N}}(\alpha; m_y, P_y) = \sum\_{i = 1}^N w^{(i)} \exp \left(j \alpha^T m_x^{(i)} - \frac{1}{2} \alpha^T P_x^{(i)} \alpha \right) \exp \left(j \alpha^T m_y - \frac{1}{2} \alpha^T P_y \alpha \right) = \\\\ = \sum\_{i = 1}^N w^{(i)} \exp \left(j \alpha^T (m_x^{(i)} + m_y) - \frac{1}{2} \alpha^T (P_x^{(i)} + P_y) \alpha \right) = \overline{\mathcal{M}}(\alpha; w_x, m_x + m_y, P_x + P_y)
 \end{split}
 $$
 We can identify that $z$ has the characteristic function of a Gaussian mixture and thus (the notation assumes that each element of the parameter set is modified):
@@ -94,7 +94,7 @@ y = A x
 $$
 By using the linear transform rule of a characteristic function we get (with the same simplified notation):
 $$
-\overline{f}_y(\alpha) = \overline{\mathcal{M}}(A^T \alpha; w_x, m_x, P_x) = \overline{\mathcal{M}}(\alpha; w_x, A m_x, A P_x A^T)
+\overline{p}_y(\alpha) = \overline{\mathcal{M}}(A^T \alpha; w_x, m_x, P_x) = \overline{\mathcal{M}}(\alpha; w_x, A m_x, A P_x A^T)
 $$
 We see, that $y$ is a Gaussian mixture variable with the following parameters:
 $$
@@ -112,17 +112,17 @@ z = H x + v, v \sim \mathcal{N}(0, R)
 $$
 The Kalman update step infers the probability density of $x$ conditioned on measurement $z$ using the Bayes rule:
 $$
-f\_{x | z}(\xi | \zeta) = \frac{f\_{z | x} (\zeta | \xi) f_x(\xi)}{f_z(\zeta)}
+p\_{x | z}(\xi | \zeta) = \frac{p\_{z | x} (\zeta | \xi) p_x(\xi)}{p_z(\zeta)}
 $$
 Let's write individual probability densities:
 $$
-f_x(\xi) = \mathcal{N}(\xi; m, P) \\\\
-f_{z | x}(\zeta | \xi) = \mathcal{N}(\zeta; H \xi, R) \\\\
-f_z(\zeta) = \mathcal{N}(\zeta; H m, H P H^T + R)
+p_x(\xi) = \mathcal{N}(\xi; m, P) \\\\
+p_{z | x}(\zeta | \xi) = \mathcal{N}(\zeta; H \xi, R) \\\\
+p_z(\zeta) = \mathcal{N}(\zeta; H m, H P H^T + R)
 $$
 The key result is that after substitution it can be reduced to another normal density of the form:
 $$
-f_{x | z}(\xi | \zeta) = \mathcal{N}(\xi; m^+, P^+)
+p_{x | z}(\xi | \zeta) = \mathcal{N}(\xi; m^+, P^+)
 $$
 With the updated mean and covariance given by the famous Kalman formulas:
 $$
@@ -178,21 +178,21 @@ z_k = H_k x_k + v_k, v_k \sim \mathcal{N}(0, R_k)
 $$
 Analogous to Kalman filter we apply the Bayes rule:
 $$
-f\_{x | z}(\xi | \zeta) = \frac{f\_{z | x} (\zeta | \xi) f_x(\xi)}{f_z(\zeta)}
+p\_{x | z}(\xi | \zeta) = \frac{p\_{z | x} (\zeta | \xi) p_x(\xi)}{p_z(\zeta)}
 $$
 Where the individual probability densities are (time index $k$ is omitted):
 $$
-f_x(\xi) = \mathcal{M}(\xi; w, m, P) \\\\
-f_{z | x}(\zeta | \xi) = \mathcal{N}(\zeta; H \xi, R) \\\\
-f_z(\zeta) = \mathcal{M}(\zeta; w, H m, H P H^T + R)
+p_x(\xi) = \mathcal{M}(\xi; w, m, P) \\\\
+p_{z | x}(\zeta | \xi) = \mathcal{N}(\zeta; H \xi, R) \\\\
+p_z(\zeta) = \mathcal{M}(\zeta; w, H m, H P H^T + R)
 $$
 By substituting the density functions into the Bayes rule we get:
 $$
-f_{x | z}(\xi | \zeta) = \frac{\sum_{i = 1}^N w^{(i)} \mathcal{N}(\zeta; H \xi, R) \mathcal{N}(\xi; m^{(i)}, P^{(i)})}{\sum_{i = 1}^N w^{(i)} \mathcal{N}(\zeta; H m^{(i)}, H P^{(i)} H^T + R)}
+p_{x | z}(\xi | \zeta) = \frac{\sum_{i = 1}^N w^{(i)} \mathcal{N}(\zeta; H \xi, R) \mathcal{N}(\xi; m^{(i)}, P^{(i)})}{\sum_{i = 1}^N w^{(i)} \mathcal{N}(\zeta; H m^{(i)}, H P^{(i)} H^T + R)}
 $$
 Now in the numerator use the probability density relation from the Kalman filter update step:
 $$
-f_{x | z}(\xi | \zeta) = \frac{\sum_{i = 1}^N w^{(i)} \mathcal{N}\left(\zeta; H m^{(i)}, H P^{(i)} H^T + R \right) \mathcal{N}\left(\xi; m^{(i)+}, P^{(i)+}\right) }{\sum_{i = 1}^N w^{(i)} \mathcal{N}(\zeta; H m^{(i)}, H P^{(i)} H^T + R)}
+p_{x | z}(\xi | \zeta) = \frac{\sum_{i = 1}^N w^{(i)} \mathcal{N}\left(\zeta; H m^{(i)}, H P^{(i)} H^T + R \right) \mathcal{N}\left(\xi; m^{(i)+}, P^{(i)+}\right) }{\sum_{i = 1}^N w^{(i)} \mathcal{N}(\zeta; H m^{(i)}, H P^{(i)} H^T + R)}
 $$
 Now the variable $\xi$ appears only in one multiplier and the whole probability density can be identified as a Gaussian mixture with the parameters:
 $$
