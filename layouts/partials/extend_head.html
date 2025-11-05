@@ -1,5 +1,15 @@
 {{- /* Head custom content area start */ -}}
 {{- /*     Insert any custom code (web-analytics, resources, etc.) - it will appear in the <head></head> section of every page. */ -}}
+
+{{ if eq .Params.Plotly true }}
+<script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
+<style>
+    svg {
+        display: inherit;
+    }
+</style>
+{{- end }}
+
 {{- /*     Can be overwritten by partial with the same name in the global layouts. */ -}}
 {{ partial "math.html" . }}
 {{- /* Head custom content area end */ -}}
