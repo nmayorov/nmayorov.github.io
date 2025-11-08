@@ -23,13 +23,15 @@ $$
 \text{where } f_i(c, P) = (x_i - c)^T P^{-1} (x_i - c) - 1
 $$
 
-The proposed innovation $f_i$ is a signed normalized squared distance from a point to the ellipsoid, which can be demonstrated for a circle:
+The proposed innovation $f_i$ represents a deviation of point's "level" from the ellipsoid level of 1.
+It is also formally a deviation from 1 of squared Mahalanobis distance between the ellipsoid center and a point using the ellipsoid shape matrix $P$.
 
-- $d^2 = (x - x_0)^2 + (y - y_0)^2 - r^2$ --- signed squared distance from a point to a circle, positive when the point is outside
-- $f = \dfrac{d^2}{r^2} = \dfrac{(x - x_0)^2}{r^2} + \dfrac{(y - y_0)^2}{r^2} - 1$ --- the squared distance normalized by the squared radius
+For a circle it comes down to the deviation of the squared distance between the center and a point from the squared radius, normalized by the radius:
 
-Such normalization makes formulation agnostic to the ellipsoid scale, which is a positive thing.
-The fact that we have to work with a squared distance is a bit strange, but required to work with a differentiable function in framework of least-squares minimization.
+- $d^2 = (x - x_0)^2 + (y - y_0)^2 - r^2$ --- deviation of the squared distance from the squared radius
+- $f = \dfrac{d^2}{r^2} = \dfrac{(x - x_0)^2}{r^2} + \dfrac{(y - y_0)^2}{r^2} - 1$ --- the normalized deviation
+
+In general such normalized innovations make formulation agnostic to the ellipsoid scale, which is a positive thing for an optimization algorithm.
 
 # Approach to the solution
 
